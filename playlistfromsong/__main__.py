@@ -18,7 +18,7 @@ except:
 
 try:
     output = subprocess.Popen(
-        ['ffmpeg','--help'],
+        ['ffmpeg', '--help'],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
@@ -31,7 +31,8 @@ programSuffix = ""
 
 def downloadURL(url):
     print("Downloading %s" % url)
-    command = "youtube-dl%s -x --audio-quality 3 --audio-format mp3 %s" %(programSuffix, url)
+    command = "youtube-dl%s -x --audio-quality 3 --audio-format mp3 %s" % (
+        programSuffix, url)
     if len(url) == 0:
         return
     output = subprocess.Popen(
@@ -40,7 +41,6 @@ def downloadURL(url):
         stderr=subprocess.PIPE
     )
     foo = output.stdout.read()
-
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
@@ -66,6 +66,7 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
     lastfmTracks = list(set(lastfmTracks))
     return (youtubeURL, lastfmTracks)
 
+
 def main():
     parser = argparse.ArgumentParser(prog='playlistfromsong')
     parser.add_argument("-s", "--song", help="list available files")
@@ -79,7 +80,8 @@ def main():
         pass
 
     if args.song == None:
-        song = input("Enter the artist and song (e.g. The Beatles Let It Be): ")
+        song = input(
+            "Enter the artist and song (e.g. The Beatles Let It Be): ")
     else:
         song = args.song
 
