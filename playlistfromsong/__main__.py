@@ -2,18 +2,13 @@ import sys
 import os
 import subprocess
 import multiprocessing
+import argparse
 
 try:
     import requests
 except:
     print("Need to install requests")
     print("python3 -m pip install requests")
-
-try:
-    import click
-except:
-    print("Need to install click")
-    print("python3 -m pip install click")
 
 try:
     from lxml import html
@@ -71,25 +66,23 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
     lastfmTracks = list(set(lastfmTracks))
     return (youtubeURL, lastfmTracks)
 
+def main():
+    parser = argparse.ArgumentParser(prog='playlistfromsong')
+    parser.add_argument("-s", "--song", help="list available files")
+    parser.add_argument("-n", "--num", help="don't add date")
+    args = parser.parse_args()
 
-@click.command()
-@click.option('--song', prompt='Enter an artist and song name',
-              help='The artist+song to seed playlist (e.g. "The Beatles Hey Jude")')
-@click.option('--num', default=30, help='Max number of songs.')
-def main(song, num):
-    """
-    Download a playlist seeded from a single song.
+    num = 30
+    try:
+        num = int(args.num)
+    except:
+        pass
 
-    Make sure to have 
+    if args.song == None:
+        song = input("Enter the artist and song (e.g. The Beatles Let It Be): ")
+    else:
+        song = args.song
 
-    youtube-dl (https://rg3.github.io/youtube-dl/)
-
-    and 
-
-    ffmpeg (https://ffmpeg.org/download.html)
-
-    installed.
-    """
     searchTrack = song
     r = requests.get('https://www.last.fm/search?q=%s' %
                      searchTrack.replace(' ', '+'))
@@ -118,7 +111,7 @@ def main(song, num):
                 break
         finishedLastFMTracks += lastfmTracks
 
-    print(youtubeLinks)
+    # print(youtubeLinks)
     newDir = '-'.join(searchTrack.split())
 
     try:

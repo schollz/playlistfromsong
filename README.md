@@ -23,7 +23,7 @@ playlistfromsong --song 'The Beatles Let It Be'
 
 ```
 # Generate a new tag
-gitc commit -am "Version bump"
+git commit -am "Version bump"
 git tag -a vX.Y -m "Description"
 git push origin --tags
 
