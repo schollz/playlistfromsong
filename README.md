@@ -1,6 +1,6 @@
 # playlistfromsong
 
-Generate a Pandora-like offline music station from a single song
+Generate a Pandora-like offline music station from a single song. The files are saved on your computer so you can play them as much as you want.
 
 # Install
 
@@ -18,20 +18,3 @@ pip install playlistfromsong
 playlistfromsong --song 'The Beatles Let It Be'
 ```
 
-
-# Packaging notes
-
-```
-# Generate a new tag
-git commit -am "Version bump"
-git tag -a vX.Y -m "Description"
-git push origin --tags
-
-# Setup ~/.pypirc according to http://peterdowns.com/posts/first-time-with-pypi.html
-
-# Run this for the first time
-python setup.py register -r pypi
-
-# Run to update
-python setup.py sdist upload -r pypi
-```
