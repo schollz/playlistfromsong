@@ -20,3 +20,4 @@ pip install playlistfromsong
 playlistfromsong --song 'The Beatles Let It Be'
 ```
 
+![](http://i.imgur.com/Yp0EdJq.gif)
