@@ -2,7 +2,7 @@
 
 Generate a Pandora-like offline music station from a single song. The files are saved on your computer so you can play them as much as you want.
 
-*playlistfromsong* uses a single song as a seed. The respective song is found on last.fm and song suggestions extracted. The song audio is then downloaded from the respective Youtube video.
+You supply a single song. *playlistfromsong* thgen finds the song on last.fm and extracts the song suggestions. Then song audio is downloaded from the respective Youtube video for each song suggestion.
 
 # Install
 
