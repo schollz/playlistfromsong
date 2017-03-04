@@ -149,7 +149,7 @@ def useSpotify(song,num,bearer):
     artistName = songJSON['tracks']['items'][0]['artists'][0]['name']
     print("%s - %s (%s)" % (artistName,songName,spotifyID))
 
-    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s' % spotifyID, headers=headers)
+    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID,num-1), headers=headers)
     recommendationJSON = json.loads(r.text)
     linksToFindOnYoutube = []
     for track in recommendationJSON['tracks']:
