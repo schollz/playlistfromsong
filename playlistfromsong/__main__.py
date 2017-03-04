@@ -4,6 +4,8 @@ import subprocess
 import multiprocessing
 import argparse
 
+import requests
+
 try:
     from lxml import html
 except:
