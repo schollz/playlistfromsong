@@ -27,7 +27,6 @@ programSuffix = ""
 
 
 def downloadURL(url):
-    print("Downloading %s" % url)
     command = "youtube-dl%s -x --audio-quality 3 --audio-format mp3 %s" % (
         programSuffix, url)
     if len(url) == 0:
@@ -38,10 +37,13 @@ def downloadURL(url):
         stderr=subprocess.PIPE
     )
     foo = output.stdout.read()
+    # print("Downloaded %s" % url)
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
-    print('Working on %s' % lastfmURL)
+    artistName = lastfmURL.split('/')[4].replace('+',' ')
+    songName = lastfmURL.split('/')[-1].replace('+',' ')
+    print('%s - %s' % (artistName,songName))
     youtubeURL = ""
     lastfmTracks = []
 
@@ -66,8 +68,8 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
 
 def main():
     parser = argparse.ArgumentParser(prog='playlistfromsong')
-    parser.add_argument("-s", "--song", help="list available files")
-    parser.add_argument("-n", "--num", help="don't add date")
+    parser.add_argument("-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
+    parser.add_argument("-n", "--num", help="number of songs to download")
     args = parser.parse_args()
 
     num = 30
@@ -91,9 +93,9 @@ def main():
     for i, track in enumerate(possibleTracks):
         firstURL = 'https://www.last.fm' + track.attrib['href']
         break
-    print(firstURL)
 
     youtubeLinks = []
+    print("\nPLAYLIST: \n")
     data = getYoutubeAndRelatedLastFMTracks(firstURL)
     finishedLastFMTracks = [firstURL]
     youtubeLinks.append(data[0])
@@ -113,15 +115,20 @@ def main():
     # print(youtubeLinks)
     newDir = '-'.join(searchTrack.split())
 
+
     try:
         os.mkdir(newDir)
     except:
         pass
     os.chdir(newDir)
     p = multiprocessing.Pool(multiprocessing.cpu_count())
-    p.map(downloadURL, youtubeLinks)
 
-    print("%d tracks saved to %s" % (len(youtubeLinks), newDir))
+    # Start downloading and print out progress
+    print("\nStarting download...")
+    for i, _ in enumerate(p.imap_unordered(downloadURL, youtubeLinks), 1):
+        sys.stderr.write('\r...{0:%} complete'.format(i/len(youtubeLinks)))
+
+    print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
 
 if __name__ == '__main__':
     is_windows = sys.platform.startswith('win')
