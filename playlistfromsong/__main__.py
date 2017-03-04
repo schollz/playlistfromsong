@@ -5,16 +5,11 @@ import multiprocessing
 import argparse
 
 try:
-    import requests
-except:
-    print("Need to install requests")
-    print("python3 -m pip install requests")
-
-try:
     from lxml import html
 except:
     print("Need to install lxml")
-    print("python3 -m pip install lxml")
+    print("See http://lxml.de/installation.html")
+    sys.exit(-1)
 
 try:
     output = subprocess.Popen(
