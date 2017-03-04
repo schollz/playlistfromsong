@@ -114,6 +114,7 @@ def useLastFM(song,num):
     youtubeLinks.append(data[0])
     lastfmTracksNext = data[1]
 
+    tries = 0
     while len(youtubeLinks) < num:
         lastfmTracks = list(set(lastfmTracksNext)-set(finishedLastFMTracks))
         p = multiprocessing.Pool(multiprocessing.cpu_count())
@@ -124,6 +125,9 @@ def useLastFM(song,num):
             if len(youtubeLinks) >= num:
                 break
         finishedLastFMTracks += lastfmTracks
+        tries += 1
+        if tries > 5:
+            break
 
     
     return youtubeLinks
