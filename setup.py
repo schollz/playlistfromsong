@@ -15,11 +15,11 @@ setup(
           "requests",
           "youtube_dl",
     ],
-    setup_requires=['pytest-runner==2.11.1'],
+    setup_requires=['pytest-runner'],
     tests_require=[
-        'pytest-flake8==0.8.1',
-        'pytest==3.0.6',
-        'pytest-cov==2.4.0'
+        'pytest-flake8',
+        'pytest',
+        'pytest-cov'
 
     ],
     entry_points={'console_scripts': [
