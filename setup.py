@@ -12,8 +12,9 @@ setup(
     keywords=['music', 'youtube', 'playlist'],
     classifiers=[],
     install_requires=[
-          "requests",
-          "youtube_dl",
+        "requests",
+        "youtube_dl",
+        'lxml',
     ],
     setup_requires=['pytest-runner'],
     tests_require=[
