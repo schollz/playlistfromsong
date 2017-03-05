@@ -70,6 +70,7 @@ def downloadURL(url):
     ydl_opts = {
         'format': 'bestaudio/best',
         'quiet': True,
+        'no_warnings': True,
 #outtmpl': # Song title ,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
