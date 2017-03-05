@@ -24,6 +24,6 @@ setup(
 
     ],
     entry_points={'console_scripts': [
-          'playlistfromsong = playlistfromsong.__main__:main',
+        'playlistfromsong = playlistfromsong.__main__:main',
     ], },
 )
