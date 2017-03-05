@@ -5,6 +5,7 @@ import multiprocessing
 import argparse
 import json
 import urllib
+import youtube_dl
 
 import requests
 
@@ -60,17 +61,27 @@ def getYoutubeURLFromSearch(searchString):
 
 
 def downloadURL(url):
-    command = "youtube-dl%s -x --audio-quality 3 --audio-format mp3 %s" % (
-        programSuffix, url)
-    if len(url) == 0:
-        return
-    output = subprocess.Popen(
-        command.split(),
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE
-    )
-    output.stdout.read()
-    # print("Downloaded %s" % url)
+    """ 
+    Downloads song using youtube_dl and the song's youtube
+    url.
+
+    outtmpl can be assigned the song title.
+    """
+    ydl_opts = {
+        'format': 'bestaudio/best',
+#outtmpl': # Song title ,
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        },
+            {'key': 'FFmpegMetadata'},
+        ],
+
+    }
+
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        info_dict = ydl.extract_info(url, download=True)
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
