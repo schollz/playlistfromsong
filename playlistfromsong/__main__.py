@@ -61,17 +61,13 @@ def getYoutubeURLFromSearch(searchString):
 
 
 def downloadURL(url):
-    """ 
-    Downloads song using youtube_dl and the song's youtube
+    """ Downloads song using youtube_dl and the song's youtube
     url.
-
-    outtmpl can be assigned the song title.
     """
     ydl_opts = {
         'format': 'bestaudio/best',
         'quiet': True,
         'no_warnings': True,
-#outtmpl': # Song title ,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -84,9 +80,11 @@ def downloadURL(url):
 
     try:
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            info_dict = ydl.extract_info(url, download=True)
+            return ydl.extract_info(url, download=True)
     except:
         print("Problem downloading " + url)
+    return None
+
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
     artistName = lastfmURL.split('/')[4].replace('+', ' ')
@@ -155,7 +153,7 @@ def useSpotify(song, num, bearer):
         'Accept': 'application/json',
         'Authorization': 'Bearer ' + bearer,
     }
-    r = requests.get('https://api.spotify.com/v1/search?q=%s&type=track,artist' % song.replace(' ', '+'), headers=headers) # NOQA
+    r = requests.get('https://api.spotify.com/v1/search?q=%s&type=track,artist' % song.replace(' ', '+'), headers=headers)  # NOQA
     if r.status_code != 200:
         print(json.loads(r.text)['error']['message'])
         print("To get an autorization code, goto ")
@@ -169,14 +167,15 @@ def useSpotify(song, num, bearer):
     artistName = songJSON['tracks']['items'][0]['artists'][0]['name']
     print("%s - %s (%s)" % (artistName, songName, spotifyID))
 
-    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID,num-1), headers=headers)  # NOQA
+    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID, num-1), headers=headers)  # NOQA
     recommendationJSON = json.loads(r.text)
     linksToFindOnYoutube = []
     for track in recommendationJSON['tracks']:
         songName = track['name']
         artistName = track['artists'][0]['name']
         print("%s - %s" % (artistName, songName))
-        linksToFindOnYoutube.append("%s - %s official" % (artistName, songName))
+        linksToFindOnYoutube.append(
+            "%s - %s official" % (artistName, songName))
 
     # Start downloading and print out progress
     p = multiprocessing.Pool(multiprocessing.cpu_count())
@@ -184,14 +183,16 @@ def useSpotify(song, num, bearer):
     urlsToDownload = []
     for i, link in enumerate(p.imap_unordered(getYoutubeURLFromSearch, linksToFindOnYoutube), 1):
         urlsToDownload.append(link)
-        sys.stderr.write('\r...{0:%} complete'.format(i / len(linksToFindOnYoutube)))
+        sys.stderr.write(
+            '\r...{0:%} complete'.format(i / len(linksToFindOnYoutube)))
     print("")
     return urlsToDownload
 
 
 def main():
     parser = argparse.ArgumentParser(prog='playlistfromsong')
-    parser.add_argument("-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
+    parser.add_argument(
+        "-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
     parser.add_argument("-n", "--num", help="number of songs to download")
     parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
     args = parser.parse_args()

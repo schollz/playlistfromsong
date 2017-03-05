@@ -3,11 +3,10 @@ from unittest import mock
 
 import pytest
 
-
 PATCH_MODULE = 'playlistfromsong.__main__'
 
 
-@pytest.mark.parametrize('url', ['', 'http://example.com'])
+@pytest.mark.parametrize('url', ['', 'https://www.youtube.com/watch?v=YSa5CO2cu-c'])
 def test_download_url(url):
     """test func."""
     output = mock.Mock()
@@ -15,16 +14,13 @@ def test_download_url(url):
         m_sp.Popen.return_value = output
         from playlistfromsong import __main__
         # run
-        __main__.downloadURL(url)
+        f = __main__.downloadURL(url)
+
         # test
         if len(url) == 0:
-            return
-        output.stdout.read.assert_called_once_with()
-        m_sp.Popen.assert_called_once_with(
-            'youtube-dl -x --audio-quality 3 --audio-format mp3 {}'.format(url).split(),
-            stdout=m_sp.PIPE,
-            stderr=m_sp.PIPE,
-        )
+            assert f is None
+        else:
+            assert f['alt_title'] == 'Take It or Leave It'
 
 
 def test_get_youtube_and_related_lastfm_tracks():
