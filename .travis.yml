@@ -1,0 +1,11 @@
+language: python
+
+python:
+  - "3.5"
+before_script:
+  - sudo apt-get install -y ffmpeg
+install:
+  # python
+  - pip install -e .
+script:
+ - python setup.py test
