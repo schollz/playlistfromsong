@@ -4,11 +4,29 @@ Generate a Pandora-like offline music station from a single song. The files are 
 
 You supply a single song and *playlistfromsong* goes to the respective song page on last.fm and extracts the song suggestions. You can also provide a bearer token (`--bearer`) to use Spotify instead of last.fm. Then song audio is downloaded from the respective Youtube video for each song suggestion. 
 
+# Dependencies 
+
+### [lxml](http://lxml.de/installation.html)
+```
+STATIC_DEPS=true pip install lxml
+```
+
+### [ffmpeg](https://ffmpeg.org/download.html)
+
+#### Mac
+```
+brew install ffmpeg
+```
+
+#### Ubuntu
+```
+sudo apt-get install ffmpeg
+```
+
+#### Windows
+[Download](https://ffmpeg.org/download.html)
+
 # Install
-
-[Download lxml](http://lxml.de/installation.html) and [download ffmpeg](https://ffmpeg.org/download.html).
-
-Then, to install with
 
 ```
 pip install playlistfromsong
