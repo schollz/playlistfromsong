@@ -27,8 +27,9 @@ except:
 
 programSuffix = ""
 
+
 def getYoutubeURLFromSearch(searchString):
-    urlToGet = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(searchString)
+    urlToGet = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(searchString)  # NOQA
     page = requests.get(urlToGet)
     tree = html.fromstring(page.content)
     videos = tree.xpath('//h3[@class="yt-lockup-title "]')
@@ -57,6 +58,7 @@ def getYoutubeURLFromSearch(searchString):
         return url
     return ""
 
+
 def downloadURL(url):
     command = "youtube-dl%s -x --audio-quality 3 --audio-format mp3 %s" % (
         programSuffix, url)
@@ -67,14 +69,14 @@ def downloadURL(url):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
-    foo = output.stdout.read()
+    output.stdout.read()
     # print("Downloaded %s" % url)
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
-    artistName = lastfmURL.split('/')[4].replace('+',' ')
-    songName = lastfmURL.split('/')[-1].replace('+',' ')
-    print('%s - %s' % (artistName,songName))
+    artistName = lastfmURL.split('/')[4].replace('+', ' ')
+    songName = lastfmURL.split('/')[-1].replace('+', ' ')
+    print('%s - %s' % (artistName, songName))
     youtubeURL = ""
     lastfmTracks = []
 
@@ -96,7 +98,8 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
     lastfmTracks = list(set(lastfmTracks))
     return (youtubeURL, lastfmTracks)
 
-def useLastFM(song,num):
+
+def useLastFM(song, num):
     searchTrack = song
     r = requests.get('https://www.last.fm/search?q=%s' %
                      searchTrack.replace(' ', '+'))
@@ -116,7 +119,7 @@ def useLastFM(song,num):
 
     tries = 0
     while len(youtubeLinks) < num:
-        lastfmTracks = list(set(lastfmTracksNext)-set(finishedLastFMTracks))
+        lastfmTracks = list(set(lastfmTracksNext) - set(finishedLastFMTracks))
         p = multiprocessing.Pool(multiprocessing.cpu_count())
         lastfmTracksNext = []
         for data in p.map(getYoutubeAndRelatedLastFMTracks, lastfmTracks):
@@ -129,17 +132,15 @@ def useLastFM(song,num):
         if tries > 5:
             break
 
-    
     return youtubeLinks
 
-    
 
-def useSpotify(song,num,bearer):
+def useSpotify(song, num, bearer):
     headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer ' + bearer,
     }
-    r = requests.get('https://api.spotify.com/v1/search?q=%s&type=track,artist' % song.replace(' ','+'), headers=headers)
+    r = requests.get('https://api.spotify.com/v1/search?q=%s&type=track,artist' % song.replace(' ', '+'), headers=headers) # NOQA
     if r.status_code != 200:
         print(json.loads(r.text)['error']['message'])
         print("To get an autorization code, goto ")
@@ -151,17 +152,16 @@ def useSpotify(song,num,bearer):
     spotifyID = songJSON['tracks']['items'][0]['id']
     songName = songJSON['tracks']['items'][0]['name']
     artistName = songJSON['tracks']['items'][0]['artists'][0]['name']
-    print("%s - %s (%s)" % (artistName,songName,spotifyID))
+    print("%s - %s (%s)" % (artistName, songName, spotifyID))
 
-    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID,num-1), headers=headers)
+    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID,num-1), headers=headers)  # NOQA
     recommendationJSON = json.loads(r.text)
     linksToFindOnYoutube = []
     for track in recommendationJSON['tracks']:
         songName = track['name']
         artistName = track['artists'][0]['name']
-        print("%s - %s" % (artistName,songName))
-        linksToFindOnYoutube.append("%s - %s official" % (artistName,songName))
-
+        print("%s - %s" % (artistName, songName))
+        linksToFindOnYoutube.append("%s - %s official" % (artistName, songName))
 
     # Start downloading and print out progress
     p = multiprocessing.Pool(multiprocessing.cpu_count())
@@ -169,15 +169,16 @@ def useSpotify(song,num,bearer):
     urlsToDownload = []
     for i, link in enumerate(p.imap_unordered(getYoutubeURLFromSearch, linksToFindOnYoutube), 1):
         urlsToDownload.append(link)
-        sys.stderr.write('\r...{0:%} complete'.format(i/len(linksToFindOnYoutube)))
+        sys.stderr.write('\r...{0:%} complete'.format(i / len(linksToFindOnYoutube)))
     print("")
     return urlsToDownload
+
 
 def main():
     parser = argparse.ArgumentParser(prog='playlistfromsong')
     parser.add_argument("-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
     parser.add_argument("-n", "--num", help="number of songs to download")
-    parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")
+    parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
     args = parser.parse_args()
 
     num = 30
@@ -186,18 +187,17 @@ def main():
     except:
         pass
 
-    if args.song == None:
+    if args.song is None:
         song = input(
             "Enter the artist and song (e.g. The Beatles Let It Be): ")
     else:
         song = args.song
 
     youtubeLinks = []
-    if args.bearer == None:
-        youtubeLinks = useLastFM(song,num)
+    if args.bearer is None:
+        youtubeLinks = useLastFM(song, num)
     else:
-        youtubeLinks = useSpotify(song,num,args.bearer)
-
+        youtubeLinks = useSpotify(song, num, args.bearer)
 
     # Start downloading and print out progress
     newDir = '-'.join(song.split())
@@ -209,10 +209,9 @@ def main():
     p = multiprocessing.Pool(multiprocessing.cpu_count())
     print("\nStarting download...")
     for i, _ in enumerate(p.imap_unordered(downloadURL, youtubeLinks), 1):
-        sys.stderr.write('\r...{0:%} complete'.format(i/len(youtubeLinks)))
+        sys.stderr.write('\r...{0:%} complete'.format(i / len(youtubeLinks)))
 
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
-
 
 
 if __name__ == '__main__':
