@@ -31,8 +31,11 @@ def test_get_youtube_and_related_lastfm_tracks():
     """test func."""
     tree = mock.Mock()
     response = mock.Mock()
-    lastfm_url = mock.Mock()
-    #
+    lastfm_url = (
+        'https://www.last.fm/music/'
+        'DragonForce/_/Dragon+Force+-+Through+The+Fire+And+Flames'
+    )
+
     yt_section = mock.Mock()
     possible_yt = mock.Mock()
     possible_yt.attrib = {'href': 'https://www.youtube.com/watch?v=random_id'}
