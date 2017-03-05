@@ -18,7 +18,7 @@ def test_download_url(url):
 
         # test
         if len(url) == 0:
-            assert f is None
+            return
         else:
             assert f['alt_title'] == 'Take It or Leave It'
 

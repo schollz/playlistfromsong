@@ -3,9 +3,15 @@ language: python
 python:
   - "3.5"
 before_script:
-  - sudo apt-get install -y ffmpeg
+  - sudo apt-get install -y libav-tools ffmpeg
+  - sudo apt-get install -y libavcodec-extra-53  
+  - wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
+  - tar xvfJ ffmpeg-git-64bit-static.tar.xz
+  - sudo mv ffmpeg-git-*/ffmpeg /usr/bin/ffmpeg
 install:
   # python
   - pip install -e .
 script:
  - python setup.py test
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
