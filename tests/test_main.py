@@ -1,5 +1,7 @@
 """test main module."""
 from unittest import mock
+from itertools import product
+import argparse
 
 import pytest
 
@@ -52,3 +54,53 @@ def test_get_youtube_and_related_lastfm_tracks():
         # run
         res = __main__.getYoutubeAndRelatedLastFMTracks(lastfm_url)
         assert res == (youtube_url, [lastfm_tracks])
+
+
+def test_parse_args():
+    """test func."""
+    argv = []
+    exp_res = {'num': None, 'song': None, 'subparserName': None, 'bearer': None}
+    from playlistfromsong import __main__
+    # run
+    res = __main__.parseArgs(argv)
+    assert vars(res) == exp_res
+
+
+@pytest.mark.parametrize(
+    'subparserName, print_path, open',
+    product(
+        ['random_subcommand', 'config'],
+        [True, False],
+        [True, False],
+    )
+)
+def test_handle_config_subcommand(subparserName, print_path, open):
+    """test func."""
+    args = argparse.Namespace(subparserName=subparserName, print_path=print_path, open=open)
+    configFile = mock.Mock()
+    with mock.patch(PATCH_MODULE + '.openFile') as m_open_file:
+        from playlistfromsong import __main__
+        # run
+        res = __main__.handleConfigSubcommand(args, configFile)
+        if args.subparserName == 'config':
+            assert res
+            if args.open:
+                m_open_file.assert_called_once_with(configFile)
+        else:
+            assert not res
+
+
+@pytest.mark.parametrize('platform', ['random', 'linux2'])
+def test_open_file(platform):
+    """test func."""
+    path = mock.Mock()
+    with mock.patch(PATCH_MODULE + '.subprocess') as m_sp, \
+            mock.patch(PATCH_MODULE + '.sys') as m_sys, \
+            mock.patch(PATCH_MODULE + '.os') as m_os:
+        m_sys.platform = platform
+        from playlistfromsong import __main__
+        __main__.openFile(path)
+        if platform == 'linux2':
+            m_sp.call.assert_called_once_with(['xdg-open', path])
+        else:
+            m_os.startfile.assert_called_once_with(path)
