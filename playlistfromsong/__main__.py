@@ -87,8 +87,11 @@ def downloadURL(url):
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
-    artistName = lastfmURL.split('/')[4].replace('+', ' ')
-    songName = lastfmURL.split('/')[-1].replace('+', ' ')
+    try:
+        artistName = lastfmURL.split('/')[4].replace('+', ' ')
+        songName = lastfmURL.split('/')[-1].replace('+', ' ')
+    except:
+        return "", []
     print('%s - %s' % (artistName, songName))
     youtubeURL = ""
     lastfmTracks = []
@@ -136,8 +139,9 @@ def useLastFM(song, num):
         p = multiprocessing.Pool(multiprocessing.cpu_count())
         lastfmTracksNext = []
         for data in p.map(getYoutubeAndRelatedLastFMTracks, lastfmTracks):
-            youtubeLinks.append(data[0])
-            lastfmTracksNext += data[1]
+            if len(data[0]) > 0:
+                youtubeLinks.append(data[0])
+                lastfmTracksNext += data[1]
             if len(youtubeLinks) >= num:
                 break
         finishedLastFMTracks += lastfmTracks

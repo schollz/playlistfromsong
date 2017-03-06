@@ -20,7 +20,7 @@ def test_download_url(url):
         if len(url) == 0:
             return
         else:
-            assert f['alt_title'] == 'Take It or Leave It'
+            assert 'Take It' in f['alt_title']
 
 
 def test_get_youtube_and_related_lastfm_tracks():
