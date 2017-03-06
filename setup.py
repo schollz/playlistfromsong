@@ -16,6 +16,7 @@ setup(
         "youtube_dl",
         'appdirs',
         'pyyaml',
+        'lxml',
     ],
     setup_requires=['pytest-runner'],
     tests_require=[
