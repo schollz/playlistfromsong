@@ -7,7 +7,9 @@ import json
 import urllib
 import youtube_dl
 
+import appdirs
 import requests
+import yaml
 
 try:
     from lxml import html
@@ -27,6 +29,11 @@ except:
     sys.exit(-1)
 
 programSuffix = ""
+defaultConfigFile = os.path.join(
+    appdirs.user_data_dir('playlistfromsong', 'schollz'), 'playlistfromsong.yaml')
+defautlConfigValue = {
+    'spotify_bearer_token': None,
+}
 
 
 def getYoutubeURLFromSearch(searchString):
@@ -193,13 +200,82 @@ def useSpotify(song, num, bearer):
     return urlsToDownload
 
 
-def main():
+def loadConfig(configFilePath):
+    """load config from user.
+
+    Args:
+        configFilePath: Config file path to load.
+
+    Returns:
+        Config value in dict format.
+    """
+    if os.path.isfile(configFilePath):
+        with open(configFilePath) as f:
+            return yaml.load(f)
+    return defautlConfigValue
+
+
+def openFile(path):
+    """open file.
+
+    Args:
+        path: Path to file.
+    """
+    if sys.platform == 'linux2':
+        subprocess.call(["xdg-open", path])
+    else:
+        os.startfile(path)
+
+
+def handleConfigSubcommand(args, configFile):
+    """handle config subcommand.
+
+    Args:
+        args: Parsed argument.
+
+    Returns:
+        bool: Return True `config` subcommand is executed.
+    """
+    if args.subparserName == 'config':
+        if args.print_path:
+            print(configFile)
+        if args.open:
+            openFile(configFile)
+        return True
+    return False
+
+
+def parseArgs(argv):
+    """parse args.
+
+    Args:
+        argv: Argument input from user.
+
+    Returns:
+        parsed arguments.
+    """
     parser = argparse.ArgumentParser(prog='playlistfromsong')
     parser.add_argument(
         "-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
     parser.add_argument("-n", "--num", help="number of songs to download")
     parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
-    args = parser.parse_args()
+
+    subparser = parser.add_subparsers(
+        title='subcommands', description='valid subcommands', help='additional help',
+        dest="subparserName")
+
+    config_argparser = subparser.add_parser('config', help='Program config.')
+    config_argparser.add_argument('-o', '--open', help='Open config file.', action='store_true')
+    config_argparser.add_argument(
+        '-p', '--print-path', help='Print path from config file.', action='store_true')
+    return parser.parse_args(argv)
+
+
+def main(argv):
+    """main function"""
+    args = parseArgs(argv)
+    if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
+        return
 
     num = 30
     try:
@@ -212,6 +288,11 @@ def main():
             "Enter the artist and song (e.g. The Beatles Let It Be): ")
     else:
         song = args.song
+
+    configArgs = loadConfig(configFilePath=defaultConfigFile)
+    # merge the value from config if user not given the same input
+    if configArgs['spotify_bearer_token'] and not args.bearer:
+        args.bearer = configArgs['spotify_bearer_token']
 
     youtubeLinks = []
     if args.bearer is None:
@@ -238,4 +319,4 @@ if __name__ == '__main__':
     is_windows = sys.platform.startswith('win')
     if is_windows:
         programSuffix = ".exe"
-    main()
+    main(sys.argv[1:])
