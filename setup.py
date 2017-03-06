@@ -14,7 +14,6 @@ setup(
     install_requires=[
         "requests",
         "youtube_dl",
-        'lxml',
         'appdirs',
         'pyyaml',
     ],

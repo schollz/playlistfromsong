@@ -271,7 +271,11 @@ def parseArgs(argv):
     return parser.parse_args(argv)
 
 
-def main(argv):
+def main():
+    main2(sys.argv[1:])
+
+
+def main2(argv):
     """main function"""
     args = parseArgs(argv)
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
@@ -319,4 +323,4 @@ if __name__ == '__main__':
     is_windows = sys.platform.startswith('win')
     if is_windows:
         programSuffix = ".exe"
-    main(sys.argv[1:])
+    main()
