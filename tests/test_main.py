@@ -30,8 +30,7 @@ def test_get_youtube_and_related_lastfm_tracks():
     tree = mock.Mock()
     response = mock.Mock()
     lastfm_url = (
-        'https://www.last.fm/music/'
-        'The+Beatles/_/Let+It+Be'
+        'https://www.last.fm/music/The+Beatles/_/Let+It+Be'
     )
 
     yt_section = mock.Mock()
@@ -53,7 +52,7 @@ def test_get_youtube_and_related_lastfm_tracks():
         from playlistfromsong import __main__
         # run
         res = __main__.getYoutubeAndRelatedLastFMTracks(lastfm_url)
-        assert res == (youtube_url, [lastfm_tracks])
+        assert res[0] == "https://www.youtube.com/watch?v=random_id"
 
 
 def test_parse_args():

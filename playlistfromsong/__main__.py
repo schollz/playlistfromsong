@@ -34,6 +34,7 @@ defaultConfigFile = os.path.join(
 defautlConfigValue = {
     'spotify_bearer_token': None,
 }
+firstDownload = True
 
 
 def getYoutubeURLFromSearch(searchString):
@@ -94,6 +95,7 @@ def downloadURL(url):
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
+    global firstDownload
     try:
         artistName = lastfmURL.split('/')[4].replace('+', ' ')
         songName = lastfmURL.split('/')[-1].replace('+', ' ')
@@ -105,6 +107,15 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
 
     r = requests.get(lastfmURL)
     tree = html.fromstring(r.content)
+    headers = tree.xpath('//h2')
+    foundSimilarTracks = False
+    for header in headers:
+        if header.text_content().strip() == 'Similar Tracks':
+            foundSimilarTracks = True
+            break
+    if not foundSimilarTracks and firstDownload:
+        return "", []
+    firstDownload = False
     youtubeSection = tree.xpath('//div[@class="video-preview"]')
     if len(youtubeSection) > 0:
         possibleYoutubes = youtubeSection[0].xpath('//a[@target="_blank"]')
@@ -313,6 +324,9 @@ def main(argv):
         sys.stderr.write('\r...{0:%} complete'.format(i / len(youtubeLinks)))
 
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
+    if len(youtubeLinks) < num / 2:
+        print("\nFound very few tracks, did you enter just an artist?")
+        print("Make sure to enter and artist AND song, e.g. 'The Beatles Let It Be'")
 
 
 if __name__ == '__main__':
