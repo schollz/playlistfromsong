@@ -10,6 +10,8 @@ Then song audio is downloaded from the respective Youtube video for each song su
 
 # Dependencies 
 
+Make sure you have Python3.3+.
+
 ### [lxml](http://lxml.de/installation.html)
 ```
 STATIC_DEPS=true pip install lxml
