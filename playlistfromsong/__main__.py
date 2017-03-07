@@ -30,6 +30,10 @@ except:
     sys.exit(-1)
 
 programSuffix = ""
+"""For available codec run following commands
+
+    ffmpeg -codec
+"""
 FFMPEGDefaultCodec = 'mp3'
 FFMPEGDefaultQuality = '192'
 defaultConfigFile = os.path.join(
