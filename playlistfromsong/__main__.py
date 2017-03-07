@@ -13,6 +13,7 @@ import appdirs
 import requests
 import yaml
 import youtube_dl
+from bs4 import BeautifulSoup
 
 try:
     from lxml import html
@@ -161,11 +162,15 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
                     youtubeURL = possibleYoutube.attrib['href']
                     break
 
-    sections = tree.xpath('//section[@class="grid-items-section"]')
-    for track in sections[0].findall('.//a'):
-        lastfmTracks.append('https://www.last.fm' + track.attrib['href'])
+    soup = BeautifulSoup(r.content, 'html.parser')
+    # sections = tree.xpath('//section[@class="grid-items-section"]')
+    sections = soup.find_all("section",class_="grid-items-section")[0].find_all('a')
+    for track in sections:
+        lastfmTracks.append('https://www.last.fm' + track.get('href'))
 
     lastfmTracks = list(set(lastfmTracks))
+    print(lastfmTracks)
+    sys.exit(1)
     return (youtubeURL, lastfmTracks)
 
 
