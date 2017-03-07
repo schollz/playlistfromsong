@@ -169,8 +169,6 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
         lastfmTracks.append('https://www.last.fm' + track.get('href'))
 
     lastfmTracks = list(set(lastfmTracks))
-    print(lastfmTracks)
-    sys.exit(1)
     return (youtubeURL, lastfmTracks)
 
 
@@ -178,11 +176,16 @@ def useLastFM(song, num):
     searchTrack = song
     r = requests.get('https://www.last.fm/search?q=%s' %
                      searchTrack.replace(' ', '+'))
-    tree = html.fromstring(r.content)
-    possibleTracks = tree.xpath('//span/a[@class="link-block-target"]')
+    soup = BeautifulSoup(r.content, 'html.parser')
+    # tree = html.fromstring(r.content)
+    # possibleTracks = tree.xpath('//span/a[@class="link-block-target"]')
     firstURL = ""
-    for i, track in enumerate(possibleTracks):
-        firstURL = 'https://www.last.fm' + track.attrib['href']
+    # for i, track in enumerate(possibleTracks):
+    #     firstURL = 'https://www.last.fm' + track.attrib['href']
+    #     break
+    chartlist = soup.find_all('table',class_='chartlist')[0]
+    for link in chartlist.find_all('a',class_='link-block-target'):
+        firstURL = 'https://www.last.fm' + link.get('href')
         break
 
     youtubeLinks = []
