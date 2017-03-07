@@ -6,6 +6,7 @@ import argparse
 import json
 import urllib
 import youtube_dl
+import logging
 
 import appdirs
 import requests
@@ -29,10 +30,14 @@ except:
     sys.exit(-1)
 
 programSuffix = ""
+FFMPEGDefaultCodec = 'mp3'
+FFMPEGDefaultQuality = '192'
 defaultConfigFile = os.path.join(
     appdirs.user_data_dir('playlistfromsong', 'schollz'), 'playlistfromsong.yaml')
 defautlConfigValue = {
     'spotify_bearer_token': None,
+    'ffmpeg_codec': FFMPEGDefaultCodec,
+    'ffmpeg_quality': FFMPEGDefaultQuality,
 }
 
 
@@ -67,18 +72,56 @@ def getYoutubeURLFromSearch(searchString):
     return ""
 
 
-def downloadURL(url):
+def getCodecAndQuality(codec=None, quality=None):
+    """Get preferred codec and quality.
+
+    This function determine which codec and quality to use,
+    depend on program config, user setting and hardcoded default.
+
+    Args:
+        codec: Codec from user
+        quality: preferred quality from user
+
+    Returns:
+        Tuple of (codec, preferredQuality)
+
+    """
+    if codec is not None and quality is not None:
+        return codec, quality
+
+    # copy the default value
+    defaultCodec = FFMPEGDefaultCodec
+    defaultQuality = FFMPEGDefaultQuality
+
+    # load from default config file
+    try:
+        configValue = loadConfig(configFilePath=defaultConfigFile)
+        defaultCodec = configValue.get('ffmpeg_codec', FFMPEGDefaultCodec)
+        defaultQuality = configValue.get('ffmpeg_quality', FFMPEGDefaultQuality)
+    except Exception as e:  # pragma: no cover
+        logging.debug('{}:{}'.format(type(e), e))
+        logging.debug("Can't load codec and quality from config file.")
+
+    codec = defaultCodec if codec is None else codec
+    quality = defaultQuality if quality is None else quality
+
+    return codec, quality
+
+
+def downloadURL(url, preferredCodec=None, preferredQuality=None):
     """ Downloads song using youtube_dl and the song's youtube
     url.
     """
+    codec, quality = getCodecAndQuality()
+
     ydl_opts = {
         'format': 'bestaudio/best',
         'quiet': True,
         'no_warnings': True,
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
-            'preferredcodec': 'mp3',
-            'preferredquality': '192',
+            'preferredcodec': codec,
+            'preferredquality': quality,
         },
             {'key': 'FFmpegMetadata'},
         ],
