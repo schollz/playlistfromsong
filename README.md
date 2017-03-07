@@ -13,11 +13,6 @@ Then song audio is downloaded from the respective Youtube video for each song su
 
 Make sure you have Python3.3+.
 
-### [lxml](http://lxml.de/installation.html)
-```
-STATIC_DEPS=true pip install lxml
-```
-
 ### [ffmpeg](https://ffmpeg.org/download.html)
 
 #### Mac

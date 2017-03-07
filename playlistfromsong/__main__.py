@@ -13,12 +13,8 @@ import appdirs
 import requests
 import yaml
 import youtube_dl
+from bs4 import BeautifulSoup
 
-try:
-    from lxml import html
-except ImportError:
-    print("Need to install lxml (http://lxml.de/installation.html")
-    sys.exit(-1)
 
 try:
     output = subprocess.Popen(
@@ -48,31 +44,17 @@ defautlConfigValue = {
 
 def getYoutubeURLFromSearch(searchString):
     urlToGet = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(searchString)  # NOQA
-    page = requests.get(urlToGet)
-    tree = html.fromstring(page.content)
-    videos = tree.xpath('//h3[@class="yt-lockup-title "]')
+    r = requests.get(urlToGet)
+    soup = BeautifulSoup(r.content, 'html.parser')
+    videos = soup.find_all('h3', class_='yt-lockup-title')
     for video in videos:
-        videoData = video.xpath('./a[contains(@href, "/watch")]')
-        if len(videoData) == 0:
-            continue
-        if 'title' not in videoData[0].attrib or 'href' not in videoData[0].attrib:
-            continue
-        title = videoData[0].attrib['title']
-        url = "https://www.youtube.com" + videoData[0].attrib['href']
+        link = video.find_all('a')[0]
+        url = "https://www.youtube.com" + link.get('href')
         if 'googleads' in url:
             continue
-        # print("Found url '%s'" % url)
-        try:
-            timeText = video.xpath(
-                './span[@class="accessible-description"]/text()')[0]
-            minutes = int(timeText.split(':')[1].strip())
-            if minutes > 12 or timeText.count(":") == 3:
-                continue
-        except:
-            pass
+        title = link.text
         if 'doubleclick' in title or 'list=' in url or 'album review' in title.lower():
             continue
-        # print("'%s' = '%s' @ %s " % (searchString, title, url))
         return url
     return ""
 
@@ -102,7 +84,8 @@ def getCodecAndQuality(codec=None, quality=None):
     try:
         configValue = loadConfig(configFilePath=defaultConfigFile)
         defaultCodec = configValue.get('ffmpeg_codec', FFMPEGDefaultCodec)
-        defaultQuality = configValue.get('ffmpeg_quality', FFMPEGDefaultQuality)
+        defaultQuality = configValue.get(
+            'ffmpeg_quality', FFMPEGDefaultQuality)
     except Exception as e:  # pragma: no cover
         logging.debug('{}:{}'.format(type(e), e))
         logging.debug("Can't load codec and quality from config file.")
@@ -151,19 +134,19 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
     lastfmTracks = []
 
     r = requests.get(lastfmURL)
-    tree = html.fromstring(r.content)
-    youtubeSection = tree.xpath('//div[@class="video-preview"]')
-    if len(youtubeSection) > 0:
-        possibleYoutubes = youtubeSection[0].xpath('//a[@target="_blank"]')
-        for possibleYoutube in possibleYoutubes:
-            if 'href' in possibleYoutube.attrib:
-                if 'youtube.com' in possibleYoutube.attrib['href']:
-                    youtubeURL = possibleYoutube.attrib['href']
-                    break
+    soup = BeautifulSoup(r.content, 'html.parser')
 
-    sections = tree.xpath('//section[@class="grid-items-section"]')
-    for track in sections[0].findall('.//a'):
-        lastfmTracks.append('https://www.last.fm' + track.attrib['href'])
+    try:
+        link = soup.find_all('div', class_='video-preview')
+        youtubeURL = link[0].find_all('a')[0].get('href')
+    except:
+        pass
+
+    # sections = tree.xpath('//section[@class="grid-items-section"]')
+    sections = soup.find_all(
+        "section", class_="grid-items-section")[0].find_all('a')
+    for track in sections:
+        lastfmTracks.append('https://www.last.fm' + track.get('href'))
 
     lastfmTracks = list(set(lastfmTracks))
     return (youtubeURL, lastfmTracks)
@@ -173,11 +156,16 @@ def useLastFM(song, num):
     searchTrack = song
     r = requests.get('https://www.last.fm/search?q=%s' %
                      searchTrack.replace(' ', '+'))
-    tree = html.fromstring(r.content)
-    possibleTracks = tree.xpath('//span/a[@class="link-block-target"]')
+    soup = BeautifulSoup(r.content, 'html.parser')
+    # tree = html.fromstring(r.content)
+    # possibleTracks = tree.xpath('//span/a[@class="link-block-target"]')
     firstURL = ""
-    for i, track in enumerate(possibleTracks):
-        firstURL = 'https://www.last.fm' + track.attrib['href']
+    # for i, track in enumerate(possibleTracks):
+    #     firstURL = 'https://www.last.fm' + track.attrib['href']
+    #     break
+    chartlist = soup.find_all('table', class_='chartlist')[0]
+    for link in chartlist.find_all('a', class_='link-block-target'):
+        firstURL = 'https://www.last.fm' + link.get('href')
         break
 
     youtubeLinks = []
@@ -312,7 +300,8 @@ def parseArgs(argv):
         dest="subparserName")
 
     config_argparser = subparser.add_parser('config', help='Program config.')
-    config_argparser.add_argument('-o', '--open', help='Open config file.', action='store_true')
+    config_argparser.add_argument(
+        '-o', '--open', help='Open config file.', action='store_true')
     config_argparser.add_argument(
         '-p', '--print-path', help='Print path from config file.', action='store_true')
     return parser.parse_args(argv)
@@ -362,7 +351,8 @@ def main2(argv):
     p = multiprocessing.Pool(multiprocessing.cpu_count())
     print("\nStarting download...")
     for i, _ in enumerate(p.imap_unordered(downloadURL, youtubeLinks), 1):
-        sys.stderr.write('\r...{0:2.1%} complete'.format(i / len(youtubeLinks)))
+        sys.stderr.write(
+            '\r...{0:2.1%} complete'.format(i / len(youtubeLinks)))
 
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
 
