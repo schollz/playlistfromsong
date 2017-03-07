@@ -140,7 +140,8 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
         link = soup.find_all('div', class_='video-preview')
         youtubeURL = link[0].find_all('a')[0].get('href')
     except:
-        pass
+        youtubeURL = getYoutubeURLFromSearch(
+            '%s - %s official' % (artistName, songName))
 
     # sections = tree.xpath('//section[@class="grid-items-section"]')
     sections = soup.find_all(
