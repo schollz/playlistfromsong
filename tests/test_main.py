@@ -8,7 +8,7 @@ import pytest
 PATCH_MODULE = 'playlistfromsong.__main__'
 
 
-@pytest.mark.parametrize('url', ['', 'https://www.youtube.com/watch?v=YSa5CO2cu-c'])
+@pytest.mark.parametrize('url', ['', ''])
 def test_download_url(url):
     """test func."""
     output = mock.Mock()
@@ -105,3 +105,35 @@ def test_open_file(platform):
             m_sp.call.assert_called_once_with(['xdg-open', path])
         else:
             m_os.startfile.assert_called_once_with(path)
+
+
+@pytest.mark.parametrize(
+    'codec, quality, configValue',
+    product(
+        [None, mock.Mock()],
+        [None, mock.Mock()],
+        [
+            {},
+            {'ffmpeg_codec': mock.Mock()},
+            {'ffmpeg_quality': mock.Mock()},
+            {'ffmpeg_quality': mock.Mock(), 'ffmpeg_codec': mock.Mock()},
+        ]
+    )
+)
+def test_get_codec_and_quality(codec, quality, configValue):
+    """test func."""
+    with mock.patch(PATCH_MODULE + '.loadConfig', return_value=configValue):
+        from playlistfromsong import __main__
+        res = __main__.getCodecAndQuality(codec, quality)
+        if codec is not None and quality is not None:
+            assert res == (codec, quality)
+            return
+        if codec is not None:
+            res_codec = codec
+        else:
+            res_codec = configValue.get('ffmpeg_codec', __main__.FFMPEGDefaultCodec)
+        if quality is not None:
+            res_quality = quality
+        else:
+            res_quality = configValue.get('ffmpeg_quality', __main__.FFMPEGDefaultQuality)
+        assert (res_codec, res_quality) == res
