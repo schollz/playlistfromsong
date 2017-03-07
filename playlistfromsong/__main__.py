@@ -1,3 +1,5 @@
+"""Main script for playlistfromsong.py, cf. https://github.com/schollz/playlistfromsong/
+"""
 import sys
 import os
 import subprocess
@@ -5,18 +7,17 @@ import multiprocessing
 import argparse
 import json
 import urllib
-import youtube_dl
 import logging
 
 import appdirs
 import requests
 import yaml
+import youtube_dl
 
 try:
     from lxml import html
-except:
-    print("Need to install lxml")
-    print("See http://lxml.de/installation.html")
+except ImportError:
+    print("Need to install lxml (http://lxml.de/installation.html")
     sys.exit(-1)
 
 try:
@@ -129,7 +130,6 @@ def downloadURL(url, preferredCodec=None, preferredQuality=None):
         },
             {'key': 'FFmpegMetadata'},
         ],
-
     }
 
     try:
@@ -237,12 +237,12 @@ def useSpotify(song, num, bearer):
 
     # Start downloading and print out progress
     p = multiprocessing.Pool(multiprocessing.cpu_count())
-    print("\nSearching Youtube for links...")
+    print("\nSearching YouTube for links...")
     urlsToDownload = []
     for i, link in enumerate(p.imap_unordered(getYoutubeURLFromSearch, linksToFindOnYoutube), 1):
         urlsToDownload.append(link)
         sys.stderr.write(
-            '\r...{0:%} complete'.format(i / len(linksToFindOnYoutube)))
+            '\r...{0:2.1%} complete'.format(i / len(linksToFindOnYoutube)))
     print("")
     return urlsToDownload
 
@@ -319,11 +319,12 @@ def parseArgs(argv):
 
 
 def main():
+    """Call main2() with command line argument."""
     main2(sys.argv[1:])
 
 
 def main2(argv):
-    """main function"""
+    """Main function, on arguments argv."""
     args = parseArgs(argv)
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
         return
@@ -361,7 +362,7 @@ def main2(argv):
     p = multiprocessing.Pool(multiprocessing.cpu_count())
     print("\nStarting download...")
     for i, _ in enumerate(p.imap_unordered(downloadURL, youtubeLinks), 1):
-        sys.stderr.write('\r...{0:%} complete'.format(i / len(youtubeLinks)))
+        sys.stderr.write('\r...{0:2.1%} complete'.format(i / len(youtubeLinks)))
 
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
 

@@ -1,6 +1,7 @@
 # playlistfromsong
 
 [![Build Status](https://travis-ci.org/schollz/playlistfromsong.svg?branch=master)](https://travis-ci.org/schollz/playlistfromsong)
+![python3.3+](https://img.shields.io/badge/python-3.3%2B-brightgreen.svg)
 
 Generate a Pandora-like offline music station from a single song. The files are saved on your computer so you can play them as much as you want.
 
@@ -34,9 +35,13 @@ sudo apt-get install ffmpeg
 
 # Install
 
+If you have python3.3+ installed, run this command
+
 ```
 pip install playlistfromsong
 ```
+
+Or use `pip3` instead of `pip` to install it with python3.
     
 # Run
 
