@@ -124,6 +124,14 @@ def downloadURL(url, preferredCodec=None, preferredQuality=None):
 
 
 def getYoutubeAndRelatedLastFMTracks(lastfmURL):
+    """find the YouTube URL for the last.fm URL and get the next recommendations
+
+    Args:
+        lastfmURL: the last.fm URL of the song
+
+    Returns:
+        tuple of YouTube URL for the current song and a list of the next recomendations
+    """
     try:
         artistName = lastfmURL.split('/')[4].replace('+', ' ')
         songName = lastfmURL.split('/')[-1].replace('+', ' ')
@@ -143,7 +151,6 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
         youtubeURL = getYoutubeURLFromSearch(
             '%s - %s official' % (artistName, songName))
 
-    # sections = tree.xpath('//section[@class="grid-items-section"]')
     sections = soup.find_all(
         "section", class_="grid-items-section")[0].find_all('a')
     for track in sections:
@@ -154,16 +161,20 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
 
 
 def useLastFM(song, num):
+    """get recommendations from last.fm and find links on YouTube
+
+    Args:
+        song: the artist + song to search for on Spotify
+        num: number of songs to recommend (1-100)
+
+    Returns:
+        list of YouTube URLs that are recommended from last.fm
+    """
     searchTrack = song
     r = requests.get('https://www.last.fm/search?q=%s' %
                      searchTrack.replace(' ', '+'))
     soup = BeautifulSoup(r.content, 'html.parser')
-    # tree = html.fromstring(r.content)
-    # possibleTracks = tree.xpath('//span/a[@class="link-block-target"]')
     firstURL = ""
-    # for i, track in enumerate(possibleTracks):
-    #     firstURL = 'https://www.last.fm' + track.attrib['href']
-    #     break
     chartlist = soup.find_all('table', class_='chartlist')[0]
     for link in chartlist.find_all('a', class_='link-block-target'):
         firstURL = 'https://www.last.fm' + link.get('href')
@@ -196,6 +207,16 @@ def useLastFM(song, num):
 
 
 def useSpotify(song, num, bearer):
+    """get recommendations from Spotify and find links on YouTube
+
+    Args:
+        song: the artist + song to search for on Spotify
+        num: number of songs to recommend (1-100)
+        bearer: bearer token
+
+    Returns:
+        list of YouTube URLs that are recommended from Spotify
+    """
     headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer ' + bearer,
