@@ -151,10 +151,14 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
         youtubeURL = getYoutubeURLFromSearch(
             '%s - %s official' % (artistName, songName))
 
-    sections = soup.find_all(
-        "section", class_="grid-items-section")[0].find_all('a')
-    for track in sections:
-        lastfmTracks.append('https://www.last.fm' + track.get('href'))
+    try:
+        sections = soup.find_all(
+            "section", class_="grid-items-section")[0].find_all('a')
+        for track in sections:
+            lastfmTracks.append('https://www.last.fm' + track.get('href'))
+    except:
+        youtubeURL = getYoutubeURLFromSearch(
+            '%s - %s official' % (artistName, songName))
 
     lastfmTracks = list(set(lastfmTracks))
     return (youtubeURL, lastfmTracks)
