@@ -3,12 +3,12 @@ from setuptools import setup
 setup(
     name='playlistfromsong',
     packages=['playlistfromsong'],
-    version='0.21',
+    version='0.22',
     description='An offline music station generator',
     author='schollz',
     url='https://github.com/schollz/playlistfromsong',
     author_email='hypercube.platforms@gmail.com',
-    download_url='https://github.com/schollz/playlistfromsong/archive/v0.19.tar.gz',
+    download_url='https://github.com/schollz/playlistfromsong/archive/v0.22.tar.gz',
     keywords=['music', 'youtube', 'playlist'],
     classifiers=[],
     install_requires=[
