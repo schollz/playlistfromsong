@@ -179,7 +179,10 @@ def useLastFM(song, num):
                      searchTrack.replace(' ', '+'))
     soup = BeautifulSoup(r.content, 'html.parser')
     firstURL = ""
-    chartlist = soup.find_all('table', class_='chartlist')[0]
+    try:
+        chartlist = soup.find_all('table', class_='chartlist')[0]
+    except:
+        return []
     for link in chartlist.find_all('a', class_='link-block-target'):
         firstURL = 'https://www.last.fm' + link.get('href')
         break
@@ -234,11 +237,13 @@ def useSpotify(song, num, bearer):
         sys.exit(-1)
     songJSON = json.loads(r.text)
 
-    spotifyID = songJSON['tracks']['items'][0]['id']
-    songName = songJSON['tracks']['items'][0]['name']
-    artistName = songJSON['tracks']['items'][0]['artists'][0]['name']
-    print("%s - %s (%s)" % (artistName, songName, spotifyID))
-
+    try:
+        spotifyID = songJSON['tracks']['items'][0]['id']
+        songName = songJSON['tracks']['items'][0]['name']
+        artistName = songJSON['tracks']['items'][0]['artists'][0]['name']
+        print("%s - %s (%s)" % (artistName, songName, spotifyID))
+    except:
+        return []
     r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID, num-1), headers=headers)  # NOQA
     recommendationJSON = json.loads(r.text)
     linksToFindOnYoutube = []
@@ -362,10 +367,16 @@ def main2(argv):
         args.bearer = configArgs['spotify_bearer_token']
 
     youtubeLinks = []
-    if args.bearer is None:
+    if num == 1:
+        youtubeLinks.append(getYoutubeURLFromSearch(song))
+    elif args.bearer is None:
         youtubeLinks = useLastFM(song, num)
     else:
         youtubeLinks = useSpotify(song, num, args.bearer)
+
+    if len(youtubeLinks) == 0:
+        print("Could not find song recommendations for '%s'" % song)
+        return
 
     # Start downloading and print out progress
     newDir = '-'.join(song.split())
