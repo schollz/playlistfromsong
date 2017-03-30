@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='playlistfromsong',
     packages=['playlistfromsong'],
-    version='0.19',
+    version='0.21',
     description='An offline music station generator',
     author='schollz',
     url='https://github.com/schollz/playlistfromsong',
