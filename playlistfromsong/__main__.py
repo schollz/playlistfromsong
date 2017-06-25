@@ -244,7 +244,7 @@ def useSpotify(song, num, bearer):
         print("%s - %s (%s)" % (artistName, songName, spotifyID))
     except:
         return []
-    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID, num-1), headers=headers)  # NOQA
+    r = requests.get('https://api.spotify.com/v1/recommendations?seed_tracks=%s&limit=%d' % (spotifyID, num - 1), headers=headers)  # NOQA
     recommendationJSON = json.loads(r.text)
     linksToFindOnYoutube = []
     for track in recommendationJSON['tracks']:
@@ -325,6 +325,7 @@ def parseArgs(argv):
         "-s", "--song", help="song to seed, e.g. 'The Beatles Let It Be'")
     parser.add_argument("-n", "--num", help="number of songs to download")
     parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
+    parser.add_argument("-f", "--folder", help="specify folder to save music")  # NOQA
 
     subparser = parser.add_subparsers(
         title='subcommands', description='valid subcommands', help='additional help',
@@ -380,6 +381,8 @@ def main2(argv):
 
     # Start downloading and print out progress
     newDir = '-'.join(song.split())
+    if args.folder != None:
+        newDir = args.folder
     try:
         os.mkdir(newDir)
     except:
