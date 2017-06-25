@@ -1,6 +1,5 @@
 from distutils.spawn import find_executable
 from subprocess import call
-from os.path import isfile, join
 
 from flask import Flask
 from flask import jsonify
@@ -12,7 +11,6 @@ logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:
     level=logging.DEBUG)
 logger = logging.getLogger('server')
 
-@app.route('/', defaults={'path': ''})
 @app.route('/download/a/song/<path:path>')
 def hello(path):
     logger.info(path)
