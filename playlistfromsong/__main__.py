@@ -381,7 +381,7 @@ def main2(argv):
 
     # Start downloading and print out progress
     newDir = '-'.join(song.split())
-    if args.folder != None:
+    if args.folder is not None:
         newDir = args.folder
     try:
         os.mkdir(newDir)
