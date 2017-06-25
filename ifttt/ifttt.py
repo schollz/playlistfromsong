@@ -10,17 +10,14 @@ logging.basicConfig(format='%(asctime)s %(levelname)-8s %(message)s',
                     level=logging.DEBUG)
 logger = logging.getLogger('server')
 
+playlistfromsong = find_executable("playlistfromsong")
 
-@app.route('/download/a/song/<path:path>')
-def hello(path):
-    logger.info(path)
-    path = path.replace("download/a/song", "")
+
+@app.route('/download/<n>/<song>')
+def download(n, song):
     cmd = "python3 -m pip install --upgrade playlistfromsong"
-    logger.info(cmd)
     call(cmd.split())
-    songs = " ".join(path.replace("/", " ").split())
-    playlistfromsong = find_executable("playlistfromsong")
-    cmd = [playlistfromsong, "-s", songs, "-n", "1"]
+    cmd = [playlistfromsong, "-s", song, "-n", n]
     logger.info(" ".join(cmd))
     call(cmd)
     return jsonify({'success': True})
