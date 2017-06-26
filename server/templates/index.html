@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+  <link rel="stylesheet" href="/assets/css/style.css">
+
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="column center">
+        <h1>HTML5 Audio Player</h1>
+        <h6>w/ responsive playlist</h6>
+    </div>
+    <div class="column add-bottom">
+        <div id="mainwrap">
+            <div id="nowPlay">
+                <span class="left" id="npAction">Paused...</span>
+                <span class="right" id="npTitle"></span>
+            </div>
+            <div id="audiowrap">
+                <div id="audio0">
+                    <audio preload id="audio1" controls="controls">Your browser does not support HTML5 Audio!</audio>
+                </div>
+                <div id="tracks">
+                    <a id="btnPrev">&laquo;</a>
+                    <a id="btnNext">&raquo;</a>
+                </div>
+            </div>
+            <div id="plwrap">
+                <ul id="plList"></ul>
+            </div>
+        </div>
+    </div>
+    <div class="column add-bottom center">
+        <p>Created by <a href="http://www.markhillard.com/">mh</a>. Music by <a href="http://www.mythium.net/">Mythium</a>.</p>
+        <p>Download: <a href="https://archive.org/download/mythium/mythium_vbr_mp3.zip">zip</a> / <a href="https://archive.org/download/mythium/mythium_archive.torrent">torrent</a></p>
+    </div>
+</div>
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js'></script>
+<script src='http://api.html5media.info/1.1.8/html5media.min.js'></script>
+
+<script>
+    // html5media enables <video> and <audio> tags in all major browsers
+// External File: https://api.html5media.info/1.1.8/html5media.min.js
+
+
+// Add user agent as an attribute on the <html> tag...
+// Inspiration: https://css-tricks.com/ie-10-specific-styles/
+var b = document.documentElement;
+b.setAttribute('data-useragent', navigator.userAgent);
+b.setAttribute('data-platform', navigator.platform);
+
+
+// HTML5 audio player + playlist controls...
+// Inspiration: http://jonhall.info/how_to/create_a_playlist_for_html5_audio
+// Mythium Archive: https://archive.org/details/mythium/
+jQuery(function ($) {
+    var supportsAudio = !!document.createElement('audio').canPlayType;
+    if (supportsAudio) {
+        var index = 0,
+            playing = false,
+            mediaPath = '{{ url }}',
+            extension = '',
+            tracks = [
+            {% for song in songs %}
+            {
+                "track": {{ song.id }},
+                "name": "{{ song.name }}",
+                "length": "",
+                "file": "/song/{{ song.file }}"
+            },
+            {% endfor %}
+            ],
+            buildPlaylist = $.each(tracks, function(key, value) {
+                var trackNumber = value.track,
+                    trackName = value.name,
+                    trackLength = value.length;
+                if (trackNumber.toString().length === 1) {
+                    trackNumber = '0' + trackNumber;
+                } else {
+                    trackNumber = '' + trackNumber;
+                }
+                $('#plList').append('<li><div class="plItem"><div class="plNum">' + trackNumber + '.</div><div class="plTitle">' + trackName + '</div><div class="plLength">' + trackLength + '</div></div></li>');
+            }),
+            trackCount = tracks.length,
+            npAction = $('#npAction'),
+            npTitle = $('#npTitle'),
+            audio = $('#audio1').bind('play', function () {
+                playing = true;
+                npAction.text('Now Playing...');
+            }).bind('pause', function () {
+                playing = false;
+                npAction.text('Paused...');
+            }).bind('ended', function () {
+                npAction.text('Paused...');
+                if ((index + 1) < trackCount) {
+                    index++;
+                    loadTrack(index);
+                    audio.play();
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }).get(0),
+            btnPrev = $('#btnPrev').click(function () {
+                if ((index - 1) > -1) {
+                    index--;
+                    loadTrack(index);
+                    if (playing) {
+                        audio.play();
+                    }
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }),
+            btnNext = $('#btnNext').click(function () {
+                if ((index + 1) < trackCount) {
+                    index++;
+                    loadTrack(index);
+                    if (playing) {
+                        audio.play();
+                    }
+                } else {
+                    audio.pause();
+                    index = 0;
+                    loadTrack(index);
+                }
+            }),
+            li = $('#plList li').click(function () {
+                var id = parseInt($(this).index());
+                if (id !== index) {
+                    playTrack(id);
+                }
+            }),
+            loadTrack = function (id) {
+                $('.plSel').removeClass('plSel');
+                $('#plList li:eq(' + id + ')').addClass('plSel');
+                npTitle.text(tracks[id].name);
+                index = id;
+                audio.src = mediaPath + tracks[id].file + extension;
+            },
+            playTrack = function (id) {
+                loadTrack(id);
+                audio.play();
+            };
+        extension = audio.canPlayType('audio/mpeg') ? '.mp3' : audio.canPlayType('audio/ogg') ? '.ogg' : '';
+        loadTrack(index);
+    }
+});
+</script>
+
+</body>
+</html>
