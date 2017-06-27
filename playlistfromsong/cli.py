@@ -23,7 +23,6 @@ from server import run_server
 def main(num, song, bearer, folder, serve, port):
     """Console script for playlistfromsong."""
     if serve:
-        click.echo("Starting server")
         run_server(folder, port)
     elif song != None:
         click.echo("Generating playlist for %d songs from '%s'" % (num, song))
