@@ -1,4 +1,4 @@
-.PHONY: clean clean-test clean-pyc clean-build docs help
+.PHONY: clean clean-test clean-pyc clean-build docs help clean-mp3
 .DEFAULT_GOAL := help
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -26,8 +26,10 @@ BROWSER := python -c "$$BROWSER_PYSCRIPT"
 help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
-clean: clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
+clean: clean-mp3 clean-build clean-pyc clean-test ## remove all build, test, coverage and Python artifacts
 
+clean-mp3:
+	find . -name '*.mp3' -exec rm -f {} +
 
 clean-build: ## remove build artifacts
 	rm -fr build/
