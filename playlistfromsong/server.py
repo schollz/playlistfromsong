@@ -13,7 +13,6 @@ app = Flask(__name__)
 playlistfromsong = find_executable("playlistfromsong")
 folder_to_save_data = abspath(".")
 port_for_server = "5000"
-external_address = "http://localhost:5000"
 SERVER_DEBUG = True
 
 chdir(dirname(realpath(__file__)))
@@ -58,7 +57,7 @@ def playlistfromsong_route():
 
 @app.route('/')
 def play():
-    return render_template('index.html', songs=get_songs(), url=external_address)  # NOQA
+    return render_template('index.html', songs=get_songs())  # NOQA
 
 
 @app.route('/assets/<path:path>')
@@ -73,11 +72,8 @@ def send_song(path):
     return send_from_directory(folder_to_save_data, path)
 
 
-def run_server(ext, f, port):
-    global folder_to_save_data, external_address, port_for_server
-    external_address = ext
-    if external_address[-1] == "/":
-        external_address = external_address[:-1]
+def run_server(f, port):
+    global folder_to_save_data, port_for_server
     if f != None:
         folder_to_save_data = abspath(f)
     if port != None:

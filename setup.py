@@ -20,17 +20,14 @@ requirements = [
     'beautifulsoup4',
     "flask",
     "waitress",
-    # TODO: put package requirements here
 ]
 
 setup_requirements = [
     'pytest-runner',
-    # TODO(schollz): put setup requirements (distutils extensions, etc.) here
 ]
 
 test_requirements = [
     'pytest',
-    # TODO: put package test requirements here
 ]
 
 setup(

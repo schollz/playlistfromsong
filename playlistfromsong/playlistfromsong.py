@@ -96,15 +96,15 @@ def getCodecAndQuality(codec=None, quality=None):
     defaultCodec = FFMPEGDefaultCodec
     defaultQuality = FFMPEGDefaultQuality
 
-    # load from default config file
-    try:
-        configValue = loadConfig(configFilePath=defaultConfigFile)
-        defaultCodec = configValue.get('ffmpeg_codec', FFMPEGDefaultCodec)
-        defaultQuality = configValue.get(
-            'ffmpeg_quality', FFMPEGDefaultQuality)
-    except Exception as e:  # pragma: no cover
-        print('{}:{}'.format(type(e), e))
-        print("Can't load codec and quality from config file.")
+    # # load from default config file
+    # try:
+    #     configValue = loadConfig(configFilePath=defaultConfigFile)
+    #     defaultCodec = configValue.get('ffmpeg_codec', FFMPEGDefaultCodec)
+    #     defaultQuality = configValue.get(
+    #         'ffmpeg_quality', FFMPEGDefaultQuality)
+    # except Exception as e:  # pragma: no cover
+    #     print('{}:{}'.format(type(e), e))
+    #     print("Can't load codec and quality from config file.")
 
     codec = defaultCodec if codec is None else codec
     quality = defaultQuality if quality is None else quality

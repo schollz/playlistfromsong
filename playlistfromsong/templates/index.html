@@ -67,6 +67,11 @@ var b = document.documentElement;
 b.setAttribute('data-useragent', navigator.userAgent);
 b.setAttribute('data-platform', navigator.platform);
 
+// Get base URL
+var pathArray = location.href.split( '/' );
+var protocol = pathArray[0];
+var host = pathArray[2];
+var url = protocol + '//' + host;
 
 // HTML5 audio player + playlist controls...
 // Inspiration: http://jonhall.info/how_to/create_a_playlist_for_html5_audio
@@ -76,7 +81,7 @@ jQuery(function ($) {
     if (supportsAudio) {
         var index = 0,
             playing = false,
-            mediaPath = '{{ url }}',
+            mediaPath = url,
             extension = '',
             tracks = [
             {% for song in songs %}

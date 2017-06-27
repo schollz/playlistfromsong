@@ -6,8 +6,8 @@ import click
 from sys import exit
 
 # For running as package
-from .playlistfromsong import run
-from .server import run_server
+from playlistfromsong import run
+from server import run_server
 
 # # For running as script
 # from playlistfromsong import run
@@ -18,13 +18,13 @@ from .server import run_server
 @click.option('--song','-s', default=None, help='Artist + Song to seed.')
 @click.option('--bearer','-b', default=None, help='Bearer token for Spotify.')
 @click.option('--folder','-f', default=None, help='Folder to save files.')
-@click.option('--server', default=None, help='External address to run server (e.g. http://localhost:5000).')
-@click.option('--port', default=None, help='Internal port to run server (e.g. 5000).')
-def main(num, song, bearer, folder, server, port):
+@click.option('--serve', is_flag=True, help='Start personal web server.')
+@click.option('--port', default="5000", help='Internal port to run server (e.g. 5000).')
+def main(num, song, bearer, folder, serve, port):
     """Console script for playlistfromsong."""
-    if server != None:
-        click.echo("Starting server at '%s'" % (server))
-        run_server(server, folder, port)
+    if serve:
+        click.echo("Starting server")
+        run_server(folder, port)
     elif song != None:
         click.echo("Generating playlist for %d songs from '%s'" % (num, song))
         run(song, num, bearer, folder)
