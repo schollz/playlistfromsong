@@ -73,7 +73,7 @@ jQuery(function ($) {
                 "track": {{ song.id }},
                 "name": "{{ song.name }}",
                 "length": "",
-                "file": "/song/{{ song.file | e }}"
+                "file": "/song/{{ song.file }}"
             },
             {% endfor %}
             ],
@@ -144,9 +144,9 @@ jQuery(function ($) {
             loadTrack = function (id) {
                 $('.plSel').removeClass('plSel');
                 $('#plList li:eq(' + id + ')').addClass('plSel');
-                npTitle.text(tracks[id].name);
+                npTitle.text(tracks[id].name.replace(/&#39;/g,"'") );
                 index = id;
-                audio.src = mediaPath + tracks[id].file + extension;
+                audio.src = mediaPath + tracks[id].file.replace(/&#39;/g,"'") + extension;
             },
             playTrack = function (id) {
                 loadTrack(id);

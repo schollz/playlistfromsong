@@ -15,6 +15,9 @@ import yaml
 import youtube_dl
 from bs4 import BeautifulSoup
 
+print(os.path.realpath(__file__))
+
+from server import run_server 
 
 try:
     output = subprocess.Popen(
@@ -308,6 +311,13 @@ def handleConfigSubcommand(args, configFile):
         if args.open:
             openFile(configFile)
         return True
+    if args.serve:
+        if not args.folder:
+            args.folder = "."
+        if not args.port:
+            args.port = "5001"
+        run_server(args.serve, args.folder,args.port)
+        return True
     return False
 
 
@@ -326,6 +336,8 @@ def parseArgs(argv):
     parser.add_argument("-n", "--num", help="number of songs to download")
     parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
     parser.add_argument("-f", "--folder", help="specify folder to save music")  # NOQA
+    parser.add_argument("--serve", help="specify external address to start music webserver") # NOQA
+    parser.add_argument("--port", help="specify internal port to start music webserver") # NOQA
 
     subparser = parser.add_subparsers(
         title='subcommands', description='valid subcommands', help='additional help',
@@ -349,6 +361,7 @@ def main2(argv):
     args = parseArgs(argv)
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
         return
+
 
     num = 30
     try:
