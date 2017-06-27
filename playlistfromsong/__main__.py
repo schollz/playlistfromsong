@@ -8,7 +8,6 @@ import multiprocessing
 import argparse
 import json
 import urllib
-import logging
 
 import appdirs
 import requests
@@ -17,8 +16,6 @@ import youtube_dl
 from bs4 import BeautifulSoup
 
 from .server import run_server
-
-logging.debug(os.path.realpath(__file__))
 
 try:
     output = subprocess.Popen(
@@ -47,6 +44,8 @@ defautlConfigValue = {
     'ffmpeg_codec': FFMPEGDefaultCodec,
     'ffmpeg_quality': FFMPEGDefaultQuality,
 }
+
+DEBUG = False
 
 
 def getYoutubeURLFromSearch(searchString):
@@ -98,8 +97,8 @@ def getCodecAndQuality(codec=None, quality=None):
         defaultQuality = configValue.get(
             'ffmpeg_quality', FFMPEGDefaultQuality)
     except Exception as e:  # pragma: no cover
-        logging.debug('{}:{}'.format(type(e), e))
-        logging.debug("Can't load codec and quality from config file.")
+        print('{}:{}'.format(type(e), e))
+        print("Can't load codec and quality from config file.")
 
     codec = defaultCodec if codec is None else codec
     quality = defaultQuality if quality is None else quality
@@ -341,6 +340,7 @@ def parseArgs(argv):
     parser.add_argument("-f", "--folder", help="specify folder to save music")  # NOQA
     parser.add_argument("--serve", help="specify external address to start music webserver")  # NOQA
     parser.add_argument("--port", help="specify internal port to start music webserver")  # NOQA
+    parser.add_argument("--debug", help="turn on debugging", action='store_true')  # NOQA
 
     subparser = parser.add_subparsers(
         title='subcommands',
@@ -365,8 +365,12 @@ def main():
 
 
 def main2(argv):
+    global DEBUG
     """Main function, on arguments argv."""
     args = parseArgs(argv)
+    if args.debug:
+        DEBUG = True
+
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
         return
 

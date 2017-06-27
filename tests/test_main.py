@@ -68,6 +68,7 @@ def test_parse_args():
         'serve': None,
         'port': None,
         'subparserName': None,
+        'debug': False,
         'bearer': None}
     from playlistfromsong import __main__
     # run
