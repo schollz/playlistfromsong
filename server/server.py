@@ -44,7 +44,7 @@ def download(n, song):
     return jsonify({'success': True})
 
 
-@app.route('/play')
+@app.route('/')
 def play():
     return render_template('index.html', songs=get_songs(), url="http://localhost:5000")
 

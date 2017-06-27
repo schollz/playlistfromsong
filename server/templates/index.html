@@ -73,7 +73,7 @@ jQuery(function ($) {
                 "track": {{ song.id }},
                 "name": "{{ song.name }}",
                 "length": "",
-                "file": "/song/{{ song.file }}"
+                "file": "/song/{{ song.file | e }}"
             },
             {% endfor %}
             ],
