@@ -4,4 +4,4 @@
 
 __author__ = """Zack"""
 __email__ = 'hypercube.platforms@gmail.com'
-__version__ = '1.0.0'
+__version__ = '2.0.0'
