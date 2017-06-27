@@ -21,7 +21,7 @@ setup(
         "waitress",
     ],
     setup_requires=['pytest-runner'],
-    include_package_data  = True,
+    include_package_data=True,
     tests_require=[
         'pytest-flake8',
         'pytest',

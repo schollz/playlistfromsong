@@ -61,8 +61,14 @@ def test_download_url(url):
 def test_parse_args():
     """test func."""
     argv = []
-    exp_res = {'num': None, 'song': None, 'folder': None,
-               'subparserName': None, 'bearer': None}
+    exp_res = {
+        'num': None,
+        'song': None,
+        'folder': None,
+        'serve': None,
+        'port': None,
+        'subparserName': None,
+        'bearer': None}
     from playlistfromsong import __main__
     # run
     res = __main__.parseArgs(argv)

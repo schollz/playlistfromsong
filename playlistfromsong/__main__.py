@@ -1,4 +1,5 @@
-"""Main script for playlistfromsong.py, cf. https://github.com/schollz/playlistfromsong/
+"""Main script for playlistfromsong.py, cf.
+https://github.com/schollz/playlistfromsong/
 """
 import sys
 import os
@@ -15,9 +16,9 @@ import yaml
 import youtube_dl
 from bs4 import BeautifulSoup
 
-print(os.path.realpath(__file__))
+from .server import run_server
 
-from server import run_server 
+logging.debug(os.path.realpath(__file__))
 
 try:
     output = subprocess.Popen(
@@ -37,7 +38,10 @@ programSuffix = ""
 FFMPEGDefaultCodec = 'mp3'
 FFMPEGDefaultQuality = '192'
 defaultConfigFile = os.path.join(
-    appdirs.user_data_dir('playlistfromsong', 'schollz'), 'playlistfromsong.yaml')
+    appdirs.user_data_dir(
+        'playlistfromsong',
+        'schollz'),
+    'playlistfromsong.yaml')
 defautlConfigValue = {
     'spotify_bearer_token': None,
     'ffmpeg_codec': FFMPEGDefaultCodec,
@@ -56,7 +60,11 @@ def getYoutubeURLFromSearch(searchString):
         if 'googleads' in url:
             continue
         title = link.text
-        if 'doubleclick' in title or 'list=' in url or 'album review' in title.lower():
+        if 'doubleclick' in title:
+            continue
+        if 'list=' in url:
+            continue
+        if 'album review' in title.lower():
             continue
         return url
     return ""
@@ -133,7 +141,8 @@ def getYoutubeAndRelatedLastFMTracks(lastfmURL):
         lastfmURL: the last.fm URL of the song
 
     Returns:
-        tuple of YouTube URL for the current song and a list of the next recomendations
+        tuple of YouTube URL for the current song and a
+        list of the next recomendations
     """
     try:
         artistName = lastfmURL.split('/')[4].replace('+', ' ')
@@ -261,7 +270,8 @@ def useSpotify(song, num, bearer):
     p = multiprocessing.Pool(multiprocessing.cpu_count())
     print("\nSearching YouTube for links...")
     urlsToDownload = []
-    for i, link in enumerate(p.imap_unordered(getYoutubeURLFromSearch, linksToFindOnYoutube), 1):
+    for i, link in enumerate(p.imap_unordered(
+            getYoutubeURLFromSearch, linksToFindOnYoutube), 1):
         urlsToDownload.append(link)
         sys.stderr.write(
             '\r...{0:2.1%} complete'.format(i / len(linksToFindOnYoutube)))
@@ -311,13 +321,6 @@ def handleConfigSubcommand(args, configFile):
         if args.open:
             openFile(configFile)
         return True
-    if args.serve:
-        if not args.folder:
-            args.folder = "."
-        if not args.port:
-            args.port = "5001"
-        run_server(args.serve, args.folder,args.port)
-        return True
     return False
 
 
@@ -336,18 +339,23 @@ def parseArgs(argv):
     parser.add_argument("-n", "--num", help="number of songs to download")
     parser.add_argument("-b", "--bearer", help="bearer token for Spotify (see https://developer.spotify.com/web-api/console/get-track/)")  # NOQA
     parser.add_argument("-f", "--folder", help="specify folder to save music")  # NOQA
-    parser.add_argument("--serve", help="specify external address to start music webserver") # NOQA
-    parser.add_argument("--port", help="specify internal port to start music webserver") # NOQA
+    parser.add_argument("--serve", help="specify external address to start music webserver")  # NOQA
+    parser.add_argument("--port", help="specify internal port to start music webserver")  # NOQA
 
     subparser = parser.add_subparsers(
-        title='subcommands', description='valid subcommands', help='additional help',
+        title='subcommands',
+        description='valid subcommands',
+        help='additional help',
         dest="subparserName")
 
     config_argparser = subparser.add_parser('config', help='Program config.')
     config_argparser.add_argument(
         '-o', '--open', help='Open config file.', action='store_true')
     config_argparser.add_argument(
-        '-p', '--print-path', help='Print path from config file.', action='store_true')
+        '-p',
+        '--print-path',
+        help='Print path from config file.',
+        action='store_true')
     return parser.parse_args(argv)
 
 
@@ -362,6 +370,13 @@ def main2(argv):
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
         return
 
+    if args.serve is not None:
+        if not args.folder:
+            args.folder = "."
+        if not args.port:
+            args.port = "5001"
+        run_server(args.serve, args.folder, args.port)
+        return True
 
     num = 30
     try:
