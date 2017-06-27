@@ -370,6 +370,8 @@ def main2(argv):
     args = parseArgs(argv)
     if args.debug:
         DEBUG = True
+    if DEBUG:
+        print("PATH: %s" % os.path.realpath(__file__))
 
     if handleConfigSubcommand(args=args, configFile=defaultConfigFile):
         return

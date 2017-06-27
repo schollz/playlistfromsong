@@ -2,7 +2,7 @@
 <html >
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>Playing music</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
@@ -14,8 +14,20 @@
 
   <div class="container">
     <div class="column center">
-        <h1>HTML5 Audio Player</h1>
-        <h6>w/ responsive playlist</h6>
+        <h1>Music Playlist</h1>
+        <h6>{{ songs | length }} songs</h6>
+    </div>
+    <div class="column center">
+<form action="/playlistfromsong">
+Generate playlist from song: <input type="text" name="song" value="The Beatles Let It Be">
+<select name="n" >
+  <option value="1">1</option>
+  <option value="3">3</option>
+  <option value="5">5</option>
+  <option value="10">10</option>
+</select>
+<input type="submit" value="Submit">
+</form>
     </div>
     <div class="column add-bottom">
         <div id="mainwrap">
@@ -38,8 +50,7 @@
         </div>
     </div>
     <div class="column add-bottom center">
-        <p>Created by <a href="http://www.markhillard.com/">mh</a>. Music by <a href="http://www.mythium.net/">Mythium</a>.</p>
-        <p>Download: <a href="https://archive.org/download/mythium/mythium_vbr_mp3.zip">zip</a> / <a href="https://archive.org/download/mythium/mythium_archive.torrent">torrent</a></p>
+        <p>Powered by <a href="https://github.com/schollz/playlistfromsong">playlistfromsong</a>.</p>
     </div>
 </div>
   <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0/jquery.min.js'></script>

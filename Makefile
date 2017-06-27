@@ -25,4 +25,6 @@ install: clean ## install the package to the active Python's site-packages
 
 
 test:
+	autopep8 --aggressive --aggressive --aggressive --in-place --recursive --max-line-length=78 playlistfromsong/__main__.py
+	autopep8 --aggressive --aggressive --aggressive --in-place --recursive --max-line-length=78 playlistfromsong/server.py
 	python3 setup.py test

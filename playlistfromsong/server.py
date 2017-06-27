@@ -4,15 +4,16 @@ import fnmatch
 import os
 import re
 
-from flask import Flask, jsonify, send_from_directory, render_template
+from flask import Flask, jsonify, send_from_directory, render_template, request
 from waitress import serve
 
 app = Flask(__name__)
 
 playlistfromsong = find_executable("playlistfromsong")
-folder_to_save_data = os.path.join(".")
+folder_to_save_data = os.path.abspath("..")
 port_for_server = "5000"
-external_address = "http://localhost"
+external_address = "http://localhost:5000"
+SERVER_DEBUG = True
 
 
 def get_songs():
@@ -21,7 +22,7 @@ def get_songs():
     for root, dirnames, filenames in os.walk(folder_to_save_data):
         for filename in fnmatch.filter(filenames, '*.mp3'):
             filename = os.path.join(root, filename).replace(
-                folder_to_save_data + '/', '')
+                folder_to_save_data, '')
             filename = filename.replace('.mp3', '')
             songname = filename
             if songname[-12:-11] == "-":
@@ -41,9 +42,17 @@ def download(n, song):
     return jsonify({'success': True})
 
 
+@app.route('/playlistfromsong')
+def playlistfromsong_route():
+    song = request.args.get('song')
+    n = request.args.get('n')
+    download(n, song)
+    return play()
+
+
 @app.route('/')
 def play():
-    return render_template('index.html', songs=get_songs(),     url=external_address) # NOQA
+    return render_template('index.html', songs=get_songs(), url=external_address)  # NOQA
 
 
 @app.route('/assets/<path:path>')
@@ -53,6 +62,8 @@ def static_stuff(path):
 
 @app.route('/song/<path:path>')
 def send_song(path):
+    if SERVER_DEBUG:
+        print("Getting %s / %s" % (folder_to_save_data, path))
     return send_from_directory(folder_to_save_data, path)
 
 
