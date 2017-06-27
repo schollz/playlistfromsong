@@ -2,7 +2,7 @@ from distutils.spawn import find_executable
 from os.path import realpath, abspath, join, dirname
 from subprocess import call
 import fnmatch
-from os import chdir, walk
+from os import chdir, walk, getcwd
 import re
 
 from flask import Flask, jsonify, send_from_directory, render_template, request
@@ -11,12 +11,10 @@ from waitress import serve
 app = Flask(__name__)
 
 playlistfromsong = find_executable("playlistfromsong")
-folder_to_save_data = abspath(".")
+folder_to_save_data = getcwd()
 port_for_server = "5000"
 SERVER_DEBUG = True
 
-chdir(dirname(realpath(__file__)))
-# print(realpath('.'))
 
 
 def get_songs():
@@ -57,7 +55,11 @@ def playlistfromsong_route():
 
 @app.route('/')
 def play():
-    return render_template('index.html', songs=get_songs())  # NOQA
+    cwd = getcwd()
+    chdir(dirname(realpath(__file__)))
+    rendered_template = render_template('index.html', songs=get_songs())
+    chdir(cwd)
+    return rendered_template
 
 
 @app.route('/assets/<path:path>')

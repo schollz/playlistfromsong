@@ -5,7 +5,7 @@
 https://github.com/schollz/playlistfromsong/
 """
 from sys import exit, platform, stderr
-from os.path import join, isfile
+from os.path import join, isfile, abspath
 from os import chdir, mkdir
 from appdirs import user_data_dir
 from subprocess import Popen, PIPE
@@ -295,6 +295,7 @@ def run(song, num, bearer=None, folder=None):
     elif bearer is None:
         youtubeLinks = useLastFM(song, num)
     else:
+        print("Using spotify")
         youtubeLinks = useSpotify(song, num, bearer)
 
     if len(youtubeLinks) == 0:
@@ -302,19 +303,15 @@ def run(song, num, bearer=None, folder=None):
         return
 
     # Start downloading and print out progress
-    newDir = '-'.join(song.split())
     if folder is not None:
-        newDir = folder
-    try:
-        mkdir(newDir)
-    except:
-        pass
-    chdir(newDir)
+        chdir(folder)
+    else:
+        folder = abspath('.')
     p = multiprocessing.Pool(multiprocessing.cpu_count())
     print("\nStarting download...")
     for i, _ in enumerate(p.imap_unordered(downloadURL, youtubeLinks), 1):
         stderr.write(
             '\r...{0:2.1%} complete'.format(i / len(youtubeLinks)))
 
-    print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), newDir))
+    print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), folder))
     return
