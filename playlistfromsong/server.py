@@ -17,7 +17,7 @@ external_address = "http://localhost:5000"
 SERVER_DEBUG = True
 
 chdir(dirname(realpath(__file__)))
-print(realpath('.'))
+# print(realpath('.'))
 
 
 def get_songs():
