@@ -1,31 +1,64 @@
-from setuptools import setup
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""The setup script."""
+
+from setuptools import setup, find_packages
+
+with open('README.rst') as readme_file:
+    readme = readme_file.read()
+
+with open('HISTORY.rst') as history_file:
+    history = history_file.read()
+
+requirements = [
+    'Click>=6.0',
+    # TODO: put package requirements here
+]
+
+setup_requirements = [
+    'pytest-runner',
+    # TODO(schollz): put setup requirements (distutils extensions, etc.) here
+]
+
+test_requirements = [
+    'pytest',
+    # TODO: put package test requirements here
+]
 
 setup(
     name='playlistfromsong',
-    packages=['playlistfromsong'],
-    version='0.13',
-    description='An offline music station generator',
-    author='schollz',
-    url='https://github.com/schollz/playlistfromsong',
+    version='1.0.0',
+    description="Generate an offline playlist from a single song",
+    long_description=readme + '\n\n' + history,
+    author="Zack",
     author_email='hypercube.platforms@gmail.com',
-    download_url='https://github.com/schollz/playlistfromsong/archive/v0.13.tar.gz',
-    keywords=['music', 'youtube', 'playlist'],
-    classifiers=[],
-    install_requires=[
-        "requests",
-        "youtube_dl",
-        'lxml',
-        'appdirs',
-        'pyyaml',
+    url='https://github.com/schollz/playlistfromsong',
+    packages=find_packages(include=['playlistfromsong']),
+    entry_points={
+        'console_scripts': [
+            'playlistfromsong=playlistfromsong.cli:main'
+        ]
+    },
+    include_package_data=True,
+    install_requires=requirements,
+    license="MIT license",
+    zip_safe=False,
+    keywords='playlistfromsong',
+    classifiers=[
+        'Development Status :: 2 - Pre-Alpha',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: MIT License',
+        'Natural Language :: English',
+        "Programming Language :: Python :: 2",
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
     ],
-    setup_requires=['pytest-runner'],
-    tests_require=[
-        'pytest-flake8',
-        'pytest',
-        'pytest-cov'
-
-    ],
-    entry_points={'console_scripts': [
-        'playlistfromsong = playlistfromsong.__main__:main',
-    ], },
+    test_suite='tests',
+    tests_require=test_requirements,
+    setup_requires=setup_requirements,
 )
