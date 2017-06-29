@@ -18,48 +18,39 @@ playlistfromsong
      :alt: Updates
 
 
-Generate an offline playlist from a single song
+Generate an offline playlist from a single song.
 
-=====
-Usage
-=====
+Features
+---------
 
-Generate a playlist from song
-------------------------------
+- Similar song matching using last.fm or Spotify (when provided with bearer token)
+- Automatic downloading of songs
+- Builtin music server for webhooks (IFTT)
 
-Download a playlist from a song by specifying the artist and the song::
+Quickstart
+------------
 
-    playlistfromsong -s 'Miles Davis Blue In Green'
-
-By default, three songs are downloaded (the original song plus 2 that are similar), but you can change this with ``-n``::
-
-    playlistfromsong -s 'Miles Davis Blue In Green' -n 30
-
-By default, the similar songs are found using last.fm, but you can choose to use Spotify instead, by providing a bearer token. Obtain a bearer token by going to https://developer.spotify.com/web-api/console/get-track/ and click "Get OAUTH_TOKEN". Then apply your token:::
-
-    playlistfromsong -s 'Miles Davis Blue In Green' -n 30 -b 'TOKEN'
+Install with ``pip``::
+    
+    pip install playlistfromsong
 
 
-Finally, you can specify a specific place to store the files by using the ``-f`` flag::
 
-    playlistfromsong -s 'Miles Davis Blue In Green' -f /music
+Download a playlist of 5 songs similar to Miles Davis' *Blue In Green*::
 
+    playlistfromsong --song 'Miles Davis Blue In Green' --num 5 -f /path/to/save
 
-Simple music server
---------------------
+.. image:: http://i.imgur.com/ldVHZcc.gif
+     :target: http://i.imgur.com/ldVHZcc.gif
+     :alt: Demo1
 
-There is a built-in simple music server that you can use to play your music, but also includes an API for webhooks for automatically generating playlists from songs.
+Use a bearer token ``--bearer`` to use Spotify to find suggestions::
 
-Star the server using::
+    playlistfromsong --song 'Miles Davis Blue In Green' --num 5 -f /path/to/save -b 'BEARER'
 
-    playlistfromsong --serve -f /path/to/music
-
-The default port is 5000, and you should be able to see your server at http://localhost:5000. You can also specify the port with ``--port X``. 
-
-There are routes for directly downloading songs. For instance, to generate a playlist in the current folder, just open::
-
-    http://localhost:5000/download/10/Miles Davis Blue In Green
-
-This is very effective for using with IFTTT to automatically download playlists based on songs that are liked on Youtube / Spotify.
+.. image:: http://i.imgur.com/uzEEEFh.gif
+     :target: http://i.imgur.com/uzEEEFh.gif
+     :alt: Demo1
 
 
+For more complete usage, see the docs.
