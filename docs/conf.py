@@ -116,6 +116,9 @@ html_theme_options = {
     'logo': 'logo.png',
     'github_user': 'schollz',
     'github_repo': 'playlistfromsong',
+    'github_button': True,
+    'github_count': True,
+    'travis_button': True,
 }
 
 # Theme options are theme-specific and customize the look and feel of a
