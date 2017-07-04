@@ -23,9 +23,9 @@ Generate an offline playlist from a single song.
 Features
 ---------
 
-- Similar song matching using last.fm or Spotify (when provided with bearer token)
+- Similar song matching using last.fm or Spotify
 - Automatic downloading of songs
-- Builtin music server for webhooks (IFTT)
+- Builtin music server for webhooks
 
 Quickstart
 ------------
@@ -33,7 +33,6 @@ Quickstart
 Install with ``pip``::
     
     pip install playlistfromsong
-
 
 
 Download a playlist of 5 songs similar to Miles Davis' *Blue In Green*::
