@@ -8,10 +8,11 @@ before_script:
   - wget https://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
   - tar xvfJ ffmpeg-git-64bit-static.tar.xz
   - sudo mv ffmpeg-git-*/ffmpeg /usr/bin/ffmpeg
+  - sudo pip install playlistfromsong
 install:
   # python
   - pip install -e .
 script:
- - python setup.py test
+  - make test
 after_success:
   - bash <(curl -s https://codecov.io/bash)
