@@ -1,5 +1,7 @@
 # Basic .gitattributes for a python repo.
 
+docs/* linguist-vendored
+
 # Source files
 # ============
 *.pxd		text
