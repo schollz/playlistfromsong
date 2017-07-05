@@ -1,6 +1,8 @@
 # Basic .gitattributes for a python repo.
 
 docs/* linguist-vendored
+playlistfromsong/assets/* linguist-vendored
+playlistfromsong/templates/* linguist-vendored
 
 # Source files
 # ============
