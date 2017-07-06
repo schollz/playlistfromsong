@@ -30,6 +30,15 @@ Features
 Quickstart
 ------------
 
+First install `ffmpeg`_:
+
+::
+
+        sudo apt-get install ffmpeg    (DEBIAN)
+        brew install ffmpeg            (MAC)
+
+.. _ffmpeg: https://ffmpeg.org/download.html
+
 Install with ``pip``::
     
     pip install playlistfromsong
