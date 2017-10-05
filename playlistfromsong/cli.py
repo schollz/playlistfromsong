@@ -36,9 +36,9 @@ def main(num, song, bearer, folder, serve, port):
             c = input("Did you mean \"%s\"? (y/n)\n" % (recommendation_artist_song))
             if c is "y":
                 num = 1
-                song = recommendation_artist_song.replace(" - ", " ")
+                song = recommendation_artist_song
                 click.echo("Generating playlist for %d songs from '%s'" % (num, song))
-                run(song, num, bearer=bearer, folder=folder)
+                run(song.replace(" - ", " "), num, bearer=bearer, folder=folder)
                 break
             song = input("Please enter the artist and song (e.g. The Beatles Let It Be): ")
     else:

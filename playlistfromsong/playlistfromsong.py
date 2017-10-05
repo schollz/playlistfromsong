@@ -343,12 +343,12 @@ def getTopFromLastFM(song):
     except:
         return []
     for link in chartlist.find_all('a', class_='link-block-target'):
-        firstURL = 'https://www.last.fm' + link.get('href')
+        firstURL = link.get('href')
         break
-    
+
     try:
-        artistName = firstURL.split('/')[4].replace('+', ' ')
+        artistName = firstURL.split('/')[2].replace('+', ' ')
         songName = firstURL.split('/')[-1].replace('+', ' ')
     except:
-        return "", []
-    return('%s - %s' % (artistName, songName))
+        return "Could not find song recommendations for '%s'" % song
+    return '%s - %s' % (artistName, songName)
