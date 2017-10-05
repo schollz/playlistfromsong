@@ -5,10 +5,12 @@
 import click
 from sys import exit
 from os import getcwd
+# import package future
+from builtins import input
 
 # For running as package
-from .playlistfromsong import run
-from .server import run_server
+from playlistfromsong import run, getTopFromLastFM
+from server import run_server
 
 
 # # For running as script
@@ -29,8 +31,16 @@ def main(num, song, bearer, folder, serve, port):
     if serve:
         run_server(folder, port)
     elif song != None:
-        click.echo("Generating playlist for %d songs from '%s'" % (num, song))
-        run(song, num, bearer=bearer, folder=folder)
+        while True:
+            recommendation_artist_song = getTopFromLastFM(song)
+            c = input("Did you mean \"%s\"? (y/n)\n" % (recommendation_artist_song))
+            if c is "y":
+                num = 1
+                song = recommendation_artist_song.replace(" - ", " ")
+                click.echo("Generating playlist for %d songs from '%s'" % (num, song))
+                run(song, num, bearer=bearer, folder=folder)
+                break
+            song = input("Please enter the artist and song (e.g. The Beatles Let It Be): ")
     else:
         click.echo("Specify a song with --song 'The Beatles Let It Be'")
         
