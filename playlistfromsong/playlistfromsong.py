@@ -4,7 +4,7 @@
 """Main script for playlistfromsong.py, cf.
 https://github.com/schollz/playlistfromsong/
 """
-from sys import exit, platform, stderr
+from sys import exit, platform, stderr, version_info
 from os.path import join, isfile, abspath
 from os import chdir, mkdir
 from appdirs import user_data_dir
@@ -34,6 +34,10 @@ programSuffix = ""
 if platform.startswith('win'):
     programSuffix = ".exe"
 
+"""Check python version
+"""
+pyVersion = version_info[0]
+
 """For available codec run following commands
 
     ffmpeg -codec
@@ -55,7 +59,11 @@ DEBUG = False
 
 
 def getYoutubeURLFromSearch(searchString):
-    urlToGet = "https://www.youtube.com/results?search_query=" + urllib.parse.quote_plus(searchString)  # NOQA
+    if pyVersion < 3:
+        urlParse = urllib.quote_plus(searchString)
+    else:
+        urlParse = urllib.parse.quote_plus(searchString)
+    urlToGet = "https://www.youtube.com/results?search_query=" + urlParse  # NOQA
     r = get(urlToGet)
     soup = BeautifulSoup(r.content, 'html.parser')
     videos = soup.find_all('h3', class_='yt-lockup-title')
@@ -315,3 +323,32 @@ def run(song, num, bearer=None, folder=None):
 
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), folder))
     return
+
+def getTopFromLastFM(song):
+    """ get top recommendation from last.fm
+    
+        Args:
+            song: the artist + song to search for recommendation
+
+        Returns:
+            artist + song
+    """ 
+    searchTrack = song
+    r = get('https://www.last.fm/search?q=%s' %
+                     searchTrack.replace(' ', '+'))
+    soup = BeautifulSoup(r.content, 'html.parser')
+    firstURL = ""
+    try:
+        chartlist = soup.find_all('table', class_='chartlist')[0]
+    except:
+        return []
+    for link in chartlist.find_all('a', class_='link-block-target'):
+        firstURL = link.get('href')
+        break
+
+    try:
+        artistName = firstURL.split('/')[2].replace('+', ' ')
+        songName = firstURL.split('/')[-1].replace('+', ' ')
+    except:
+        return "Could not find song recommendations for '%s'" % song
+    return '%s - %s' % (artistName, songName)
