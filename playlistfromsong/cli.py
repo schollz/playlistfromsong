@@ -7,8 +7,12 @@ from sys import exit
 from os import getcwd
 
 # For running as package
-from .playlistfromsong import run, getTopFromLastFM
-from .server import run_server
+try:
+	from .playlistfromsong import run, getTopFromLastFM
+	from .server import run_server
+except:
+	from playlistfromsong import run, getTopFromLastFM
+	from server import run_server
 
 from sys import version_info
 

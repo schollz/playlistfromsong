@@ -32,7 +32,7 @@ test_requirements = [
 
 setup(
     name='playlistfromsong',
-    version='2.2.1',
+    version='2.2.2',
     description="Generate an offline playlist from a single song",
     long_description=readme + '\n\n' + history,
     author="Zack",
