@@ -201,7 +201,7 @@ def useLastFM(song, num):
     """
     searchTrack = song
     r = get('https://www.last.fm/search?q=%s' %
-                     searchTrack.replace(' ', '+'))
+            searchTrack.replace(' ', '+'))
     soup = BeautifulSoup(r.content, 'html.parser')
     firstURL = ""
     try:
@@ -324,18 +324,19 @@ def run(song, num, bearer=None, folder=None):
     print("\n\n%d tracks saved to %s\n" % (len(youtubeLinks), folder))
     return
 
+
 def getTopFromLastFM(song):
     """ get top recommendation from last.fm
-    
+
         Args:
             song: the artist + song to search for recommendation
 
         Returns:
             artist + song
-    """ 
+    """
     searchTrack = song
     r = get('https://www.last.fm/search?q=%s' %
-                     searchTrack.replace(' ', '+'))
+            searchTrack.replace(' ', '+'))
     soup = BeautifulSoup(r.content, 'html.parser')
     firstURL = ""
     try:

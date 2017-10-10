@@ -40,7 +40,6 @@ def main(num, song, bearer, folder, serve, port):
             c = getinput('Did you mean "' +
                          song + '"? (y/n) ')
             if c is "y":
-                num = 1
                 click.echo(
                     "Generating playlist for %d songs from '%s' \n(for generating more songs, use -n NUMBER)" % (num, song))
                 run(song.replace(" - ", " "), num, bearer=bearer, folder=folder)
@@ -49,6 +48,7 @@ def main(num, song, bearer, folder, serve, port):
                 "Please enter the artist and song (e.g. The Beatles Let It Be): ")
     else:
         click.echo("Specify a song with --song 'The Beatles Let It Be'")
+
 
 if __name__ == "__main__":
     main()
