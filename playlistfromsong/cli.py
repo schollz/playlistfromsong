@@ -4,7 +4,8 @@
 
 import click
 from sys import exit
-from os import getcwd
+from os import getcwd, path, makedirs
+import datetime
 
 # For running as package
 try:
@@ -28,10 +29,15 @@ from sys import version_info
 @click.option('--folder', '-f', default=None, help='Folder to save files.')
 @click.option('--serve', is_flag=True, help='Start personal web server.')
 @click.option('--port', default="5000", help='Internal port to run server (e.g. 5000).')
-def main(num, song, bearer, folder, serve, port):
+@click.option('--date','-d', is_flag=True, help='Put songs in folder based on date')
+def main(num, song, bearer, folder, serve, port, date):
     """Console script for playlistfromsong."""
     if folder is None:
         folder = getcwd()
+    if date:
+        folder += "/" + datetime.datetime.now().strftime("%Y-%m-%d")
+        if not path.exists(folder):
+            makedirs(folder)
     if serve:
         run_server(folder, port)
     elif song != None:
